@@ -5,12 +5,13 @@ import gr.arma3.arma.modarchiver.api.v1.Checksum;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,20 +19,21 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 class UtilsTest {
 	private static final Random r;
-	private static File test;
-	private static File empty;
-	private static File[] allFiles;
+	private static final File test;
+	private static final File empty;
+	private static final File[] allFiles;
 
 	static {
-		r = new Random();
-	}
+		final long seed = System.nanoTime() + System.currentTimeMillis();
+		Logger.getLogger(UtilsTest.class.getName()).log(Level.INFO,
+			"Seeding byte generator RNG: " + seed);
 
-	@BeforeAll
-	static void setup() {
+		r = new Random();
 		test = new File("src/test/resources/checksumTest.txt");
 		empty = new File("src/test/resources/emptyFile.txt");
 		allFiles = new File[]{test, empty};
 	}
+
 
 	private static void testChecksum(final InputStream inputStream) {
 		try (inputStream) {
@@ -70,30 +72,16 @@ class UtilsTest {
 	}
 
 	@Test
+	void testLargeSource() {
+		UtilsTest.testChecksum(new ByteProducer());
+	}
+
+	@Test
 	void calculateChecksums() {
 		getFileStreams().map(BufferedInputStream::new)
 			.forEach(UtilsTest::testChecksum);
 	}
 
-	@Test
-	void largeFileTest() throws IOException {
-		final int step = Size.KiB.getBytes() * 4;
-		final File file = File.createTempFile("test_file_1gb", "_tmp");
-		final byte[] buffer = new byte[step];
-		final Random r = new Random();
-		int written;
-
-		try (final OutputStream os = new FileOutputStream(file)) {
-			for (int i = 0; i * step < Size.GiB.getBytes(); i++) {
-				r.nextBytes(buffer);
-				os.write(buffer);
-			}
-		}
-
-		try (final InputStream is = createInputStream(Size.GiB.getBytes())) {
-			testChecksum(is);
-		}
-	}
 
 	@Test
 	void getNumberOfChunks() {
@@ -117,26 +105,6 @@ class UtilsTest {
 				test.chunkSizeKiB), test.toString()));
 	}
 
-	private InputStream createInputStream(final int size) throws IOException {
-/*
-		final byte buffer[] = new byte[Size.KiB.getBytes() * 4];
-		final OutputStream os = new ByteArrayOutputStream(buffer.length);
-
-
-
-		final File file = File.createTempFile("a3mm", null);
-
-
-		try (final OutputStream os = new FileOutputStream(file)) {
-			for (int i = 0; i * step < Size.GiB.getBytes(); i++) {
-				r.nextBytes(buffer);
-				os.write(buffer);
-			}
-		}
-
-		return new BufferedInputStream(new FileInputStream(file));*/
-		return null;
-	}
 
 	@EqualsAndHashCode
 	@RequiredArgsConstructor
