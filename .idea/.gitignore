@@ -1,0 +1,8 @@
+# Default ignored files
+/workspace.xml
+/$PRODUCT_WORKSPACE_FILE$
+/.name
+/compiler.xml
+/misc.xml
+/artifacts/
+dictionaries/
