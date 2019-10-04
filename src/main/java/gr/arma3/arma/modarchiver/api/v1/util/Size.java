@@ -1,18 +1,16 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
-import lombok.Getter;
 import lombok.ToString;
+import lombok.experimental.UtilityClass;
 
-@Getter
+/**
+ * Size constants. This used to be an enum but having to jump through a getter
+ * to get the value got old pretty quick.
+ */
 @ToString
-public enum Size {
-	KiB(1 << 10),
-	MiB(1 << 20),
-	GiB(1 << 30);
-
-	private final int bytes;
-
-	private Size(final int sizeBytes) {
-		this.bytes = sizeBytes;
-	}
+@UtilityClass
+public class Size {
+	public static final int KiB = 1 << 10;
+	public static final int MiB = 1 << 20;
+	public static final int GiB = 1 << 30;
 }

@@ -19,14 +19,19 @@ public class Checksum implements ApiObject {
 	@NotNull
 	private final long[] checksums;
 
-
+	/**
+	 * CRC of the entire file.
+	 */
 	private final long fileHash;
 
 
 	/**
-	 * Chunk size in KiB. Set to 4 by default.
+	 * Chunk size in KiB. Must be > 0.
 	 */
 	@DecimalMin("1")
 	private final int chunkSizeKiB;
+
+	@DecimalMin("0")
+	private final int fileSizeBytes;
 
 }

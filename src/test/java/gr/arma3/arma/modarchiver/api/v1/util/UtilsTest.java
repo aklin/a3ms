@@ -26,12 +26,14 @@ class UtilsTest {
 	static {
 		final long seed = System.nanoTime() + System.currentTimeMillis();
 		Logger.getLogger(UtilsTest.class.getName()).log(Level.INFO,
-			"Seeding byte generator RNG: " + seed);
+			"RNG seed " + seed);
 
 		r = new Random();
 		test = new File("src/test/resources/checksumTest.txt");
 		empty = new File("src/test/resources/emptyFile.txt");
 		allFiles = new File[]{test, empty};
+
+		ByteProducer.setSource(r);
 	}
 
 
@@ -97,15 +99,24 @@ class UtilsTest {
 			new ChunkTestData(1, 4, 2048),
 			new ChunkTestData(1, 4, 2049),
 
-			new ChunkTestData(1, 4, 4 * Size.KiB.getBytes()),
-			new ChunkTestData(1, 4, (4 * Size.KiB.getBytes()) - 1),
-			new ChunkTestData(2, 4, (4 * Size.KiB.getBytes()) + 1),
+			new ChunkTestData(1, 4, 4 * Size.KiB),
+			new ChunkTestData(1, 4, (4 * Size.KiB) - 1),
+			new ChunkTestData(2, 4, (4 * Size.KiB) + 1),
 		}).forEach(test -> assertEquals(test.expectedChunkSize,
 			Utils.getNumberOfChunks(test.fileSizeBytes,
 				test.chunkSizeKiB), test.toString()));
 	}
 
+	@Test
+	void testGetSizeKiB() {
+		Arrays.stream(allFiles)
+			.forEach(file -> Utils.getSizeKiB(file.toPath()));
+	}
 
+
+	/**
+	 * Used to test chunking arithmetic.
+	 */
 	@EqualsAndHashCode
 	@RequiredArgsConstructor
 	@ToString

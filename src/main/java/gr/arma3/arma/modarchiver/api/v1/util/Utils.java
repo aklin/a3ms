@@ -17,8 +17,7 @@ import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
 public class Utils {
-	public static final int DEFAULT_CHUNK_SIZE_KIB = 4;
-	private static final int KiB = 1024;
+	static final int DEFAULT_CHUNK_SIZE_KIB = 4;
 	private static final Logger logger;
 
 	static {
@@ -33,7 +32,7 @@ public class Utils {
 		return null;
 	}
 
-	public static int getSizeKiB(final Path path) {
+	static int getSizeKiB(final Path path) {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
@@ -45,12 +44,12 @@ public class Utils {
 	 * @return At least 1.
 	 * @see Utils#DEFAULT_CHUNK_SIZE_KIB
 	 */
-	public static int getNumberOfChunks(
+	static int getNumberOfChunks(
 		final int inputSizeBytes,
 		final int chunkSizeKiB
 	) {
 		final int inputSize = Math.max(1, inputSizeBytes);
-		final int chunkSize = Math.max(1, chunkSizeKiB) * KiB;
+		final int chunkSize = Math.max(1, chunkSizeKiB) * Size.KiB;
 		final int divResult = inputSize / chunkSize;
 		final int remainder = inputSize % chunkSize > 0 ? 1 : 0;
 
@@ -64,7 +63,7 @@ public class Utils {
 	 * @return
 	 */
 	@NotNull
-	public static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
+	static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
 		final int inputSizeBytes,
 		final int chunkSizeKiB,
 		final InputStream input
@@ -73,7 +72,7 @@ public class Utils {
 		final Checksum total = new CRC32(); // Checksum for entire file
 
 		final long remainingBytes;
-		final int bufferSizeBytes = chunkSizeKiB * Utils.KiB;
+		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;
 		final int totalChunks = Utils.getNumberOfChunks(inputSizeBytes,
 			chunkSizeKiB);
 
