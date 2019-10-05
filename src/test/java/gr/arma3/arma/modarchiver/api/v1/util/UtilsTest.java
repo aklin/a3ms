@@ -14,8 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsTest {
 	private static final Random r;
@@ -34,6 +33,13 @@ class UtilsTest {
 		allFiles = new File[]{test, empty};
 
 		ByteProducer.setSource(r);
+	}
+
+
+	@Test
+	void testMinFileSize() {
+		final Checksum c = Checksum.builder().fileSizeBytes(-1).build();
+		assertFalse(Utils.validate(c));
 	}
 
 

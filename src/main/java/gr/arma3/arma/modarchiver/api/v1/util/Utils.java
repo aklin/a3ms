@@ -3,25 +3,32 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 
 import gr.arma3.arma.modarchiver.api.v1.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
+import lombok.experimental.UtilityClass;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+@UtilityClass
 public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 4;
 	private static final Logger logger;
+	private static final Validator validator;
 
 	static {
 		logger = Logger.getLogger(ModFile.class.getName());
+		validator = Validation.buildDefaultValidatorFactory().getValidator();
 	}
 
 	public static <E extends ApiObject> E fromYaml(final String yamlstr) {
@@ -34,6 +41,24 @@ public class Utils {
 
 	static int getSizeKiB(final Path path) {
 		return (int) Math.ceil(path.toFile().length());
+	}
+
+	/**
+	 * Check given objects
+	 *
+	 * @param object
+	 * @return
+	 */
+	static boolean validate(final ApiObject object) {
+		final Set<ConstraintViolation<ApiObject>> errors =
+			validator.validate(object);
+
+		for (final ConstraintViolation<ApiObject> violation : errors) {
+			logger.log(Level.SEVERE,
+				object.getTypeName() + ": " + violation.getMessage());
+		}
+
+		return errors.isEmpty();
 	}
 
 	/**
@@ -62,7 +87,6 @@ public class Utils {
 	 * @param input          Data input stream.
 	 * @return
 	 */
-	@NotNull
 	static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
 		final int inputSizeBytes,
 		final int chunkSizeKiB,
@@ -70,6 +94,10 @@ public class Utils {
 	) throws IOException {
 		final Checksum chunk = new CRC32(); // Single chunk checksum
 		final Checksum total = new CRC32(); // Checksum for entire file
+
+		final gr.arma3.arma.modarchiver.api.v1.Checksum.ChecksumBuilder b =
+			gr.arma3.arma.modarchiver.api.v1.Checksum
+				.builder();
 
 		final long remainingBytes;
 		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;

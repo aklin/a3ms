@@ -7,12 +7,15 @@ import java.io.Serializable;
  * @since 1.0
  */
 public interface ApiObject extends FriendlyName, Versionable, Serializable {
+
 	default String getTypeName() {
-		return this.getClass().getName();
+		return this.getClass().getName().substring(
+			this.getClass().getPackageName().length() + 1
+		);
 	}
 
 	default String getTypeDocumentation() {
-		return "todo";
+		return "";
 	}
 
 	@Override

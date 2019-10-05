@@ -4,19 +4,21 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Data
-@Builder
 @AllArgsConstructor
+@Builder(toBuilder = true)
 public class Checksum implements ApiObject {
 
 	/**
 	 * Checksums of all chunks of this file. Chunks size is obtained from
 	 * {@link #getChunkSizeKiB()}.
 	 */
-	@NotNull
+	@NotEmpty
+	@Size(min = 1, message = "At least 1 checksum must be present.")
 	private final long[] checksums;
 
 	/**
@@ -28,10 +30,9 @@ public class Checksum implements ApiObject {
 	/**
 	 * Chunk size in KiB. Must be > 0.
 	 */
-	@DecimalMin("1")
+	@Min(value = 1, message = "Minimum chunk size is 1 KiB.")
 	private final int chunkSizeKiB;
 
-	@DecimalMin("0")
 	private final int fileSizeBytes;
 
 }
