@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ import java.util.logging.Logger;
 
 @Data
 @Builder
+@JsonDeserialize(builder = ModFile.ModFileBuilder.class)
 public class ModFile implements ApiObject {
 	private static final Logger logger;
 

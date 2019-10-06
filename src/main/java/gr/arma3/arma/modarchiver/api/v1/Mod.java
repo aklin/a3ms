@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ import java.util.TreeSet;
  */
 @Data
 @Builder
+@JsonDeserialize(builder = Mod.ModBuilder.class)
 public class Mod implements ApiObject {
 	private final String folderName;
 	private final String friendlyName;

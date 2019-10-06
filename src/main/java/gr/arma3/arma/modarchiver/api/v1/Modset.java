@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Getter
 @Builder
+@JsonDeserialize(builder = Modset.ModsetBuilder.class)
 public class Modset implements ApiObject {
 	private final String friendlyName;
 	private final String description;

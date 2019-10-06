@@ -1,6 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
-
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import lombok.experimental.UtilityClass;
@@ -8,11 +11,14 @@ import lombok.experimental.UtilityClass;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -25,10 +31,22 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 4;
 	private static final Logger logger;
 	private static final Validator validator;
+	private static final ObjectMapper mapper;
+	private static final TypeReference<? extends Map<String, String>> mapRef;
+//	private static final Set<ApiObject> apiObjects;
 
 	static {
 		logger = Logger.getLogger(ModFile.class.getName());
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
+		mapper = new ObjectMapper(new YAMLFactory());
+		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+		mapper.configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
+		mapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
+		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+		mapRef = new TypeReference<HashMap<String, String>>() {
+		};
+//		apiObjects = new Reflections("gr.arma3.arma.modarchiver.api.v1")
+//			.getSubTypesOf(ApiObject.class)
 	}
 
 	public static <E extends ApiObject> E fromYaml(final String yamlstr) {
@@ -43,13 +61,35 @@ public class Utils {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
+	public static ApiObject parseFile(final Path path) throws
+		IOException {
+		final File file = path.toFile();
+		final Map<String, String> raw = mapper.readValue(
+			new FileInputStream(file), mapRef);
+		final String type = raw.computeIfAbsent("type", (s) -> "");
+
+		if (type.isEmpty()) {
+			throw new RuntimeException("'type' field missing from: " + path.toString());
+		}
+
+		return null;
+	}
+/*
+
+	private static Class<? extends ApiObject> mapTypeToBuilder(final String
+	type) {
+		api
+		apiObjects.stream().filter(o -> (o.).getTypeName())
+	}
+*/
+
 	/**
 	 * Check given objects
 	 *
-	 * @param object
-	 * @return
+	 * @param object API object to validate.
+	 * @return True if no errors occurred.
 	 */
-	static boolean validate(final ApiObject object) {
+	public static boolean validate(final ApiObject object) {
 		final Set<ConstraintViolation<ApiObject>> errors =
 			validator.validate(object);
 

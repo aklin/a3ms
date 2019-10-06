@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 @Data
 @AllArgsConstructor
 @Builder(toBuilder = true)
+@JsonDeserialize(builder = Checksum.ChecksumBuilder.class)
 public class Checksum implements ApiObject {
 
 	/**

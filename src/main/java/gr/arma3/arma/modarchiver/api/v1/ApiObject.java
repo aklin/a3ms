@@ -27,6 +27,4 @@ public interface ApiObject extends FriendlyName, Versionable, Serializable {
 	default String getVersion() {
 		return "a3md.com/v1";
 	}
-
-
 }
