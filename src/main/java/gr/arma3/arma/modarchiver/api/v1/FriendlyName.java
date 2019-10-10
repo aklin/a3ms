@@ -11,5 +11,7 @@ public interface FriendlyName {
 	 *
 	 * @return user-friendly name
 	 */
-	String getFriendlyName();
+	default String getFriendlyName() {
+		return Defaults.NAME;
+	}
 }

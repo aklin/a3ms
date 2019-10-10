@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
@@ -13,13 +14,13 @@ import java.util.logging.Logger;
 
 @Getter
 @EqualsAndHashCode
-//@RequiredArgsConstructor
+@SuperBuilder(toBuilder = true)
+@RequiredArgsConstructor
 @JsonDeserialize(builder = AbstractV1ApiObject.AbstractV1ApiObjectBuilder.class)
-@SuperBuilder
 public abstract class AbstractV1ApiObject implements ApiObject {
 	private static final long serialVersionUID;
 	private static final ObjectMapper mapper;
-	private static final Logger logger;
+	protected static final Logger logger;
 
 	static {
 		serialVersionUID = 1000L;
@@ -36,7 +37,7 @@ public abstract class AbstractV1ApiObject implements ApiObject {
 	 * @return Json representation of this object.
 	 */
 	@Override
-	public String toString() {
+	public final String toString() {
 		try {
 			return mapper
 				.writerWithDefaultPrettyPrinter()

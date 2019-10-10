@@ -1,6 +1,5 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
@@ -14,7 +13,7 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(builder = Checksum.ChecksumBuilder.class)
+//@JsonDeserialize(builder = Checksum.ChecksumBuilder.class)
 public class Checksum extends AbstractV1ApiObject {
 
 	/**

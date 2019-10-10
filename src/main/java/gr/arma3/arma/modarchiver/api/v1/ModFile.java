@@ -1,14 +1,14 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
-import java.util.logging.Logger;
 
 /**
  * A file that belongs to a mod.
@@ -16,15 +16,11 @@ import java.util.logging.Logger;
  * @since 1.0
  */
 
-@Data
-@Builder
+@Getter
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = ModFile.ModFileBuilder.class)
-public class ModFile implements ApiObject {
-	private static final Logger logger;
-
-	static {
-		logger = Logger.getLogger(ModFile.class.getName());
-	}
+public class ModFile extends AbstractV1ApiObject {
 
 	@NotEmpty(message = "friendlyName must not be empty.")
 	private final String friendlyName;
@@ -41,7 +37,6 @@ public class ModFile implements ApiObject {
 	/**
 	 * Checksum for the entire file. For quick and dirty comparisons.
 	 */
-	@Builder.Default
-	private long checksum = 0;
+	private final long checksum;
 }
 

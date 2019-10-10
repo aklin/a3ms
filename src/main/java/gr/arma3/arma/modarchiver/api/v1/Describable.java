@@ -12,6 +12,6 @@ public interface Describable {
 	 * @return user-friendly description
 	 */
 	default String getDescription() {
-		return "";
+		return Defaults.DESCRIPTION;
 	}
 }

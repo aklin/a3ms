@@ -1,13 +1,11 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.github.snksoft.crc.CRC;
-import gr.arma3.arma.modarchiver.api.v1.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.Checksum;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.junit.jupiter.api.Test;
-import org.reflections.Reflections;
 
 import java.io.*;
 import java.util.Arrays;
@@ -59,14 +57,6 @@ class UtilsTest {
 		assertEquals(c, Utils.mapToObject(Utils.parseYaml(s)));
 	}
 
-	@Test
-	void testApiObjectClasses() {
-		new Reflections("gr.arma3.arma.modarchiver.api.v1")
-			.getSubTypesOf(ApiObject.class).stream()
-			.map(Class::getName)
-			.map(fqn -> fqn.substring(fqn.lastIndexOf('.') + 1))
-			.forEach(System.out::println);
-	}
 
 
 	private static void testChecksum(final InputStream inputStream) {

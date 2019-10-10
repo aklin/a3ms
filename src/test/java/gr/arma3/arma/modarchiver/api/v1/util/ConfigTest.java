@@ -30,7 +30,7 @@ class ConfigTest {
 		assertFalse(Config.contains("does not exist"));
 	}
 
-	@Test
+	//	@Test
 	void testLangNamespacing() {
 
 	}

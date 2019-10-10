@@ -1,8 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +16,10 @@ import java.util.List;
  */
 
 @Getter
-@Builder
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = Modset.ModsetBuilder.class)
-public class Modset implements ApiObject {
+public class Modset extends AbstractV1ApiObject {
 	private final String friendlyName;
 	private final String description;
 	private final List<Mod> modList;
