@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
+import lombok.ToString;
 import lombok.experimental.UtilityClass;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.logging.Logger;
  * Utility class which holds information from config files.
  */
 @UtilityClass
+@ToString
 public final class Config {
 	private static final Logger logger;
 	private static final Properties properties;
@@ -42,14 +44,22 @@ public final class Config {
 	}
 
 	public static String lang(final String langKey, final Object... args) {
-		if (!contains(langKey)) {
-			logger.severe(MessageFormat.format(
+		final String key = parseLangKey(langKey);
+
+		if (!contains(key)) {
+			logger.warning(MessageFormat.format(
 				"No such language key: [{0}]",
-				langKey
+				key
 			));
-			return langKey;
+			return key;
 		}
-		return MessageFormat.format(get(langKey), args);
+		return MessageFormat.format(get(key), args);
+	}
+
+	private static String parseLangKey(final String langKey) {
+		return (langKey == null ? "" : langKey).startsWith("lang.")
+			? langKey
+			: "lang." + langKey;
 	}
 
 	/**
@@ -98,5 +108,13 @@ public final class Config {
 
 	public static boolean contains(final String key) {
 		return key != null && properties.contains(key);
+	}
+
+	public static int size() {
+		return properties.size();
+	}
+
+	public void print() {
+		properties.list(System.out);
 	}
 }
