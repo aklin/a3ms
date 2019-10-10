@@ -81,7 +81,7 @@ class UtilsTest {
 				new ByteArrayInputStream(bytes)
 			);
 
-			assertEquals(checksum.getFileHash(), hash);
+			assertEquals(hash, checksum.getFileHash());
 		} catch (Exception e) {
 			fail(e);
 		}

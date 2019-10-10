@@ -212,7 +212,7 @@ public class Utils {
 			total.update(buffer, 0, bytesRead);
 
 			totalBytesRead += bytesRead;
-			b.checksum(chunk.getValue());
+			b.checksum(chunk.getValue()).fileHash(total.getValue());
 		}
 
 		b.fileSizeBytes(totalBytesRead);
