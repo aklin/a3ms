@@ -1,27 +1,30 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Singular;
+import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.util.List;
 
-@Data
-@AllArgsConstructor
-@Builder(toBuilder = true)
+@Getter
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
 @JsonDeserialize(builder = Checksum.ChecksumBuilder.class)
-public class Checksum implements ApiObject {
+public class Checksum extends AbstractV1ApiObject {
 
 	/**
 	 * Checksums of all chunks of this file. Chunks size is obtained from
 	 * {@link #getChunkSizeKiB()}.
 	 */
+	@Singular
 	@NotEmpty
 	@Size(min = 1, message = "At least 1 checksum must be present.")
-	private final long[] checksums;
+	private final List<Long> checksums;
 
 	/**
 	 * CRC of the entire file.

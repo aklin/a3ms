@@ -26,8 +26,8 @@ class UtilsTest {
 
 	static {
 		final long seed = System.nanoTime() + System.currentTimeMillis();
-		Logger.getLogger(UtilsTest.class.getName()).log(Level.INFO,
-			"RNG seed " + seed);
+		Logger.getLogger(UtilsTest.class.getName())
+			.log(Level.INFO, "RNG seed " + seed);
 
 		r = new Random();
 		test = new File("src/test/resources/checksumTest.txt");
@@ -41,7 +41,22 @@ class UtilsTest {
 	@Test
 	void testMinFileSize() {
 		final Checksum c = Checksum.builder().fileSizeBytes(-1).build();
+
 		assertFalse(Utils.validate(c));
+	}
+
+	@Test
+	void testToString() {
+		final Checksum c = Checksum.builder()
+			.checksum(0L)
+			.chunkSizeKiB(1)
+			.fileSizeBytes(0)
+			.fileHash(0)
+			.build();
+		final String s = c.toString();
+		System.out.println(s);
+
+		assertEquals(c, Utils.mapToObject(Utils.parseYaml(s)));
 	}
 
 	@Test

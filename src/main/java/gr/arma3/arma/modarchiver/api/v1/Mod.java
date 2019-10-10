@@ -1,11 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.util.TreeSet;
 
@@ -16,29 +14,13 @@ import java.util.TreeSet;
  * @since 1.0
  */
 @Data
-@Builder
+@SuperBuilder
 @JsonDeserialize(builder = Mod.ModBuilder.class)
-public class Mod implements ApiObject {
+public class Mod extends AbstractV1ApiObject {
 	private final String folderName;
 	private final String friendlyName;
 	private final String version;
 	private final Instant lastRevision;
 	private final TreeSet<ModFile> folderStructure;
 
-	public static TreeSet<ModFile> generateStructure(final Path root) throws
-		IOException {
-		final TreeSet<ModFile> top;
-
-/*
-		if(!root.isDirectory() || !root.canRead()){
-			throw new IllegalArgumentException("Parameter must be a readable
-			directory");
-		}
-*/
-
-//		Files.walk(root).parallel().map(path -> {Files.});
-//		top = new TreeSet<>();
-
-		return null;
-	}
 }

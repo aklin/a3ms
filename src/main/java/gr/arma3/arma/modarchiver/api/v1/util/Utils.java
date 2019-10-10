@@ -1,12 +1,16 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import gr.arma3.arma.modarchiver.api.v1.AbstractV1ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import lombok.experimental.UtilityClass;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -16,11 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
@@ -33,7 +33,6 @@ public class Utils {
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
 	private static final TypeReference<? extends Map<String, String>> mapRef;
-//	private static final Set<ApiObject> apiObjects;
 
 	static {
 		logger = Logger.getLogger(ModFile.class.getName());
@@ -45,8 +44,6 @@ public class Utils {
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 		mapRef = new TypeReference<HashMap<String, String>>() {
 		};
-//		apiObjects = new Reflections("gr.arma3.arma.modarchiver.api.v1")
-//			.getSubTypesOf(ApiObject.class)
 	}
 
 	public static <E extends ApiObject> E fromYaml(final String yamlstr) {
@@ -74,14 +71,60 @@ public class Utils {
 
 		return null;
 	}
-/*
 
-	private static Class<? extends ApiObject> mapTypeToBuilder(final String
-	type) {
-		api
-		apiObjects.stream().filter(o -> (o.).getTypeName())
+	public static Map<String, String> parseJson(final String json) {
+		try {
+			return mapper.readValue(json, mapRef);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyMap();
 	}
+
+	public static Map<String, String> parseYaml(final String yaml) {
+		try {
+			return new ObjectMapper(new YAMLFactory()).readValue(yaml, mapRef);
+//			return mapper.readValue(yaml, mapRef);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyMap();
+	}
+
+	public static ApiObject mapToObject(final Map<String, String> map) {
+		final AbstractV1ApiObject.AbstractV1ApiObjectBuilder builder;
+//		final String type = map.get("Type");
+
+		final Reflections reflections = new Reflections(
+			"gr.arma3.arma.modarchiver.api.v1",
+			new SubTypesScanner(false));
+
+		final Set<Class<? extends ApiObject>> types =
+			reflections.getSubTypesOf(
+			ApiObject.class);
+
+		types.stream().forEach(type -> {
+			System.out.println(type.getName());
+		});
+
+/*
+		for(Class<? extends ApiObject> type : types){
+			type.g
+		}
+
+		switch (type) {
+			case "Checksum": return gr.arma3.arma.modarchiver.api.v1.Checksum
+			.builder();
+			case "Mod": return gr.arma3.arma.modarchiver.api.v1.Mod.builder();
+		}
 */
+
+		return null;
+	}
+
+	private static String getName(final Class<? extends ApiObject> c) {
+		return c.getName().substring(c.getName().lastIndexOf('.') + 1);
+	}
 
 	/**
 	 * Check given objects
@@ -136,8 +179,10 @@ public class Utils {
 		final Checksum total = new CRC32(); // Checksum for entire file
 
 		final gr.arma3.arma.modarchiver.api.v1.Checksum.ChecksumBuilder b =
-			gr.arma3.arma.modarchiver.api.v1.Checksum
-				.builder();
+			gr.arma3.arma.modarchiver.api.v1.Checksum.builder()
+				.fileHash(0)
+				.chunkSizeKiB(chunkSizeKiB)
+				.fileSizeBytes(inputSizeBytes);
 
 		final long remainingBytes;
 		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;
@@ -145,19 +190,14 @@ public class Utils {
 			chunkSizeKiB);
 
 		final byte[] buffer = new byte[bufferSizeBytes];
-		final long[] chunks = new long[totalChunks];
 
 		if (inputSizeBytes < 1) {
-			return gr.arma3.arma.modarchiver.api.v1.Checksum.builder()
-				.chunkSizeKiB(chunkSizeKiB)
-				.checksums(chunks)
-				.fileHash(0)
-				.build();
+			return b.checksum(0L).build();
 		}
 
 		int totalBytesRead = 0; // This must match the file size at the end.
 
-		for (int i = 0; i < chunks.length; i++) {
+		for (int i = 0; i < totalChunks; i++) {
 			final int bytesRead;
 			Arrays.fill(buffer, (byte) 0);
 			chunk.reset();
@@ -172,26 +212,21 @@ public class Utils {
 			total.update(buffer, 0, bytesRead);
 
 			totalBytesRead += bytesRead;
-			chunks[i] = chunk.getValue();
+			b.checksum(chunk.getValue());
 		}
 
-		logger.log(Level.WARNING, "Read a total of {0} bytes.",
-			totalBytesRead);
+		b.fileSizeBytes(totalBytesRead);
+
+		logger.log(Level.INFO, "Read a total of {0} bytes.", totalBytesRead);
 		remainingBytes = input.available();
 		if (remainingBytes != 0) {
 			logger.log(Level.WARNING,
-				MessageFormat.format(
-					"Was expecting {0} bytes. Read a total of {1} but there " +
-						"is {2} bytes remaining.",
+				Config.lang("lang.total-bytes-read-mismatch",
 					inputSizeBytes,
 					totalBytesRead,
 					remainingBytes));
 		}
 
-		return gr.arma3.arma.modarchiver.api.v1.Checksum.builder()
-			.checksums(chunks)
-			.fileHash(total.getValue())
-			.chunkSizeKiB(chunkSizeKiB)
-			.build();
+		return b.build();
 	}
 }
