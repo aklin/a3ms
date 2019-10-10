@@ -23,7 +23,8 @@ class UtilsTest {
 	private static final File[] allFiles;
 
 	static {
-		final long seed = System.nanoTime() + System.currentTimeMillis();
+		final long seed = 4412412124L;//System.nanoTime() + System
+		// .currentTimeMillis();
 		Logger.getLogger(UtilsTest.class.getName())
 			.log(Level.INFO, "RNG seed " + seed);
 
@@ -43,23 +44,7 @@ class UtilsTest {
 		assertFalse(Utils.validate(c));
 	}
 
-	@Test
-	void testToString() {
-		final Checksum c = Checksum.builder()
-			.checksum(0L)
-			.chunkSizeKiB(1)
-			.fileSizeBytes(0)
-			.fileHash(0)
-			.build();
-		final String s = c.toString();
-		System.out.println(s);
-
-		assertEquals(c, Utils.mapToObject(Utils.parseYaml(s)));
-	}
-
-
-
-	private static void testChecksum(final InputStream inputStream) {
+	private static Checksum testChecksum(final InputStream inputStream) {
 		try (inputStream) {
 			//we need bytes to run our separate crc32 trial
 			final byte[] bytes = inputStream.readAllBytes();
@@ -72,10 +57,26 @@ class UtilsTest {
 			);
 
 			assertEquals(hash, checksum.getFileHash());
+
+			return checksum;
 		} catch (Exception e) {
 			fail(e);
 		}
+		return null;
+	}
 
+	@Test
+	void testToString() {
+		final Checksum c = Checksum.builder()
+			.checksum(0L)
+			.chunkSizeKiB(1)
+			.fileSizeBytes(0)
+			.fileHash(0)
+			.build();
+		final String s = c.toString();
+		System.out.println(s);
+
+		assertEquals(c, Utils.deserialize(c.toString()));
 	}
 
 	Stream<InputStream> getFileStreams() {
@@ -101,9 +102,15 @@ class UtilsTest {
 	}
 
 	@Test
-	void calculateChecksums() {
-		getFileStreams().map(BufferedInputStream::new)
-			.forEach(UtilsTest::testChecksum);
+	void calculateChecksumsAndCheckSerialization() {
+		getFileStreams()
+			.map(BufferedInputStream::new)
+			.map(UtilsTest::testChecksum)
+			.forEach(checksum -> {
+				System.out.println(Utils.serialize(checksum));
+				assertEquals(checksum,
+					Utils.deserialize(Utils.serialize(checksum)));
+			});
 	}
 
 

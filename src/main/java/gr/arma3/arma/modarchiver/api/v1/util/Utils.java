@@ -2,15 +2,11 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import gr.arma3.arma.modarchiver.api.v1.AbstractV1ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import lombok.experimental.UtilityClass;
-import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -20,7 +16,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.CRC32;
@@ -32,7 +30,6 @@ public class Utils {
 	private static final Logger logger;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
-	private static final TypeReference<? extends Map<String, String>> mapRef;
 
 	static {
 		logger = Logger.getLogger(ModFile.class.getName());
@@ -42,8 +39,6 @@ public class Utils {
 		mapper.configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
-		mapRef = new TypeReference<HashMap<String, String>>() {
-		};
 	}
 
 	public static <E extends ApiObject> E fromYaml(final String yamlstr) {
@@ -61,69 +56,15 @@ public class Utils {
 	public static ApiObject parseFile(final Path path) throws
 		IOException {
 		final File file = path.toFile();
-		final Map<String, String> raw = mapper.readValue(
-			new FileInputStream(file), mapRef);
-		final String type = raw.computeIfAbsent("type", (s) -> "");
+		final ApiObject raw = mapper.readValue(
+			new FileInputStream(file), ApiObject.class);
+//		final String type = raw.getTypeName();
 
-		if (type.isEmpty()) {
+/*		if (type.isEmpty()) {
 			throw new RuntimeException("'type' field missing from: " + path.toString());
-		}
+		}*/
 
-		return null;
-	}
-
-	public static Map<String, String> parseJson(final String json) {
-		try {
-			return mapper.readValue(json, mapRef);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return Collections.emptyMap();
-	}
-
-	public static Map<String, String> parseYaml(final String yaml) {
-		try {
-			return new ObjectMapper(new YAMLFactory()).readValue(yaml, mapRef);
-//			return mapper.readValue(yaml, mapRef);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return Collections.emptyMap();
-	}
-
-	public static ApiObject mapToObject(final Map<String, String> map) {
-		final AbstractV1ApiObject.AbstractV1ApiObjectBuilder builder;
-//		final String type = map.get("Type");
-
-		final Reflections reflections = new Reflections(
-			"gr.arma3.arma.modarchiver.api.v1",
-			new SubTypesScanner(false));
-
-		final Set<Class<? extends ApiObject>> types =
-			reflections.getSubTypesOf(
-			ApiObject.class);
-
-		types.stream().forEach(type -> {
-			System.out.println(type.getName());
-		});
-
-/*
-		for(Class<? extends ApiObject> type : types){
-			type.g
-		}
-
-		switch (type) {
-			case "Checksum": return gr.arma3.arma.modarchiver.api.v1.Checksum
-			.builder();
-			case "Mod": return gr.arma3.arma.modarchiver.api.v1.Mod.builder();
-		}
-*/
-
-		return null;
-	}
-
-	private static String getName(final Class<? extends ApiObject> c) {
-		return c.getName().substring(c.getName().lastIndexOf('.') + 1);
+		return raw;
 	}
 
 	/**
@@ -138,7 +79,7 @@ public class Utils {
 
 		for (final ConstraintViolation<ApiObject> violation : errors) {
 			logger.log(Level.SEVERE,
-				object.getTypeName() + ": " + violation.getMessage());
+				/*object.getTypeName() + */": " + violation.getMessage());
 		}
 
 		return errors.isEmpty();
@@ -228,5 +169,25 @@ public class Utils {
 		}
 
 		return b.build();
+	}
+
+	public static ApiObject deserialize(final String raw) {
+		try {
+			return mapper.readValue(raw, ApiObject.class);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static String serialize(ApiObject apiObject) {
+		try {
+			return mapper
+				.writerWithDefaultPrettyPrinter()
+				.writeValueAsString(apiObject);
+		} catch (JsonProcessingException e) {
+			logger.severe(e.getMessage());
+			return "";
+		}
 	}
 }

@@ -1,6 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-public interface Defaults extends Versionable {
+public interface Defaults {
 	/**
 	 * Default chunk size over which the checksum is calculated.
 	 */

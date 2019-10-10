@@ -1,5 +1,7 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
@@ -8,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.Instant;
 import java.util.List;
 
 @Getter
@@ -38,5 +41,23 @@ public class Checksum extends AbstractV1ApiObject {
 	private final int chunkSizeKiB;
 
 	private final int fileSizeBytes;
+
+
+	@JsonCreator
+	protected static Checksum deserialise(
+		@JsonProperty("friendlyName") String name,
+		@JsonProperty("lastRevision") Instant lastRevision,
+		@JsonProperty("fileHash") long fileHash,
+		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
+		@JsonProperty("fileSizeBytes") int fileSizeBytes
+	) {
+		return Checksum.builder()
+			.fileHash(fileHash)
+			.friendlyName(name)
+			.lastRevision(lastRevision)
+			.chunkSizeKiB(chunkSizeKiB)
+			.fileSizeBytes(fileSizeBytes)
+			.build();
+	}
 
 }

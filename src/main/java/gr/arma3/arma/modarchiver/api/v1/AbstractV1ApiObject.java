@@ -1,9 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -14,17 +11,18 @@ import java.util.logging.Logger;
 
 @Getter
 @EqualsAndHashCode
-@SuperBuilder(toBuilder = true)
+@SuperBuilder
 @RequiredArgsConstructor
-@JsonDeserialize(builder = AbstractV1ApiObject.AbstractV1ApiObjectBuilder.class)
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@JsonDeserialize(builder = AbstractV1ApiObject.AbstractV1ApiObjectBuilder
+// .class)
 public abstract class AbstractV1ApiObject implements ApiObject {
 	private static final long serialVersionUID;
-	private static final ObjectMapper mapper;
 	protected static final Logger logger;
 
 	static {
 		serialVersionUID = 1000L;
-		mapper = new ObjectMapper(new YAMLFactory());
 		logger = Logger.getLogger(AbstractV1ApiObject.class.getName());
 	}
 
@@ -38,13 +36,6 @@ public abstract class AbstractV1ApiObject implements ApiObject {
 	 */
 	@Override
 	public final String toString() {
-		try {
-			return mapper
-				.writerWithDefaultPrettyPrinter()
-				.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
-			e.printStackTrace();
-			return "";
-		}
+		return Utils.serialize(this);
 	}
 }
