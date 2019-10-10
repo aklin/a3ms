@@ -2,9 +2,11 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 
 import lombok.experimental.UtilityClass;
 
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.URISyntaxException;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.logging.Logger;
@@ -28,12 +30,12 @@ public final class Config {
 
 		for (final String file : configFiles) {
 			try (final Reader reader = new FileReader(
-				ClassLoader.getSystemResource(file).getFile())) {
+				new File(ClassLoader.getSystemResource(file).toURI()))) {
 
 				properties.load(reader);
 
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IOException | URISyntaxException e) {
+				logger.severe("Cannot open resource file: " + e.getLocalizedMessage());
 			}
 		}
 
@@ -95,6 +97,6 @@ public final class Config {
 	 */
 
 	public static boolean contains(final String key) {
-		return properties.contains(key);
+		return key != null && properties.contains(key);
 	}
 }

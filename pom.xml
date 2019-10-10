@@ -172,7 +172,8 @@
 							</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources</directory>
+									<directory>"${basedir}/src/main/resources"
+									</directory>
 									<filtering>true</filtering>
 								</resource>
 							</resources>
