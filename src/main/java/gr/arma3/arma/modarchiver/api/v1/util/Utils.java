@@ -5,8 +5,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import lombok.experimental.UtilityClass;
+import lombok.extern.java.Log;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -20,19 +20,17 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
+@Log
 @UtilityClass
 public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 4;
-	private static final Logger logger;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
 
 	static {
-		logger = Logger.getLogger(ModFile.class.getName());
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
 		mapper = new ObjectMapper(new YAMLFactory());
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
@@ -41,11 +39,12 @@ public class Utils {
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
 	}
 
-	public static <E extends ApiObject> E fromYaml(final String yamlstr) {
-		return null;
-	}
-
 	public static <E extends ApiObject> E fromMap(final Map<String, String> map) {
+		try {
+			return (E) deserialize(mapper.writer().writeValueAsString(map));
+		} catch (JsonProcessingException e) {
+			log.severe(e.getMessage());
+		}
 		return null;
 	}
 
@@ -53,18 +52,9 @@ public class Utils {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
-	public static ApiObject parseFile(final Path path) throws
-		IOException {
+	public static ApiObject parseFile(final Path path) throws IOException {
 		final File file = path.toFile();
-		final ApiObject raw = mapper.readValue(
-			new FileInputStream(file), ApiObject.class);
-//		final String type = raw.getTypeName();
-
-/*		if (type.isEmpty()) {
-			throw new RuntimeException("'type' field missing from: " + path.toString());
-		}*/
-
-		return raw;
+		return mapper.readValue(new FileInputStream(file), ApiObject.class);
 	}
 
 	/**
@@ -77,10 +67,9 @@ public class Utils {
 		final Set<ConstraintViolation<ApiObject>> errors =
 			validator.validate(object);
 
-		for (final ConstraintViolation<ApiObject> violation : errors) {
-			logger.log(Level.SEVERE,
-				/*object.getTypeName() + */": " + violation.getMessage());
-		}
+		errors.stream()
+			.map(ConstraintViolation::getMessage)
+			.forEach(log::severe);
 
 		return errors.isEmpty();
 	}
@@ -106,10 +95,12 @@ public class Utils {
 	}
 
 	/**
+	 * Create a Checksum object for the given input stream.
+	 *
 	 * @param inputSizeBytes Expected input source size in bytes.
 	 * @param chunkSizeKiB   Chunk size in KiB.
 	 * @param input          Data input stream.
-	 * @return
+	 * @return Checksum object for given input stream.
 	 */
 	static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
 		final int inputSizeBytes,
@@ -158,10 +149,10 @@ public class Utils {
 
 		b.fileSizeBytes(totalBytesRead);
 
-		logger.log(Level.INFO, "Read a total of {0} bytes.", totalBytesRead);
+		log.log(Level.INFO, "Read a total of {0} bytes.", totalBytesRead);
 		remainingBytes = input.available();
 		if (remainingBytes != 0) {
-			logger.log(Level.WARNING,
+			log.log(Level.WARNING,
 				Config.lang("total-bytes-read-mismatch",
 					inputSizeBytes,
 					totalBytesRead,
@@ -186,7 +177,7 @@ public class Utils {
 				.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(apiObject);
 		} catch (JsonProcessingException e) {
-			logger.severe(e.getMessage());
+			log.severe(e.getMessage());
 			return "";
 		}
 	}

@@ -20,6 +20,7 @@ import java.util.TreeSet;
 @JsonDeserialize(builder = Mod.ModBuilder.class)
 public class Mod extends AbstractV1ApiObject {
 	private final String folderName;
+	private final String description;
 	private final String friendlyName;
 	private final String version;
 	private final Instant lastRevision;
