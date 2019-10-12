@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
 import java.util.TreeSet;
 
@@ -18,11 +19,30 @@ import java.util.TreeSet;
 @Getter
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
-public class Mod extends AbstractV1ApiObject implements Revisable {
+public class Mod extends AbstractV1ApiObject implements Revisable, Describable {
+	/**
+	 * Mod directory name. Begins with '@'.
+	 */
 	private final String folderName;
+	/**
+	 * Mod description. This is auto-populated from the mod's
+	 * mod.cpp and meta.cpp files.
+	 */
+	@NotEmpty
 	private final String description;
+	/**
+	 * Mod version. Auto-populated from mod.cpp and meta.cpp files.
+	 */
 	private final String version;
+	/**
+	 * Get the most recent modification date of all files described
+	 * by this object.
+	 */
 	private final Instant lastRevision;
+
+	/**
+	 * Mod file and directory structure.
+	 */
 	private final TreeSet<ModFile> folderStructure;
 
 

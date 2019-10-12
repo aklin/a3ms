@@ -50,7 +50,9 @@ public abstract class AbstractV1ApiObject implements ApiObject {
 
 	@Override
 	public String getType() {
-		return this.getClass().getName()
-			.substring(this.getClass().getName().lastIndexOf('.') + 1);
+		return type != null
+			? type
+			: this.getClass().getName()
+				.substring(this.getClass().getName().lastIndexOf('.') + 1);
 	}
 }

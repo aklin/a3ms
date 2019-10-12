@@ -21,15 +21,19 @@ import java.util.Set;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-public class Repository extends AbstractV1ApiObject implements Revisable {
+public class Repository extends AbstractV1ApiObject
+	implements Revisable, Describable {
 
-	@NotEmpty
+	/**
+	 * All modsets defined in this repository.
+	 */
+	@NotNull
 	private final Set<Modset> modsets;
 
 	/**
 	 * Repository description as set by the repo admin.
 	 */
-	@NotNull
+	@NotEmpty
 	private final String description;
 
 	/**
