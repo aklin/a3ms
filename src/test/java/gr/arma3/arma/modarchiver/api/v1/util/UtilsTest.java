@@ -51,7 +51,6 @@ class UtilsTest {
 			final long hash = new CRC(CRC.Parameters.CRC32).calculateCRC(
 				bytes);
 			final Checksum checksum = Utils.calculateChecksums(
-				Utils.getSizeKiB(test.toPath()),
 				Utils.DEFAULT_CHUNK_SIZE_KIB,
 				new ByteArrayInputStream(bytes)
 			);

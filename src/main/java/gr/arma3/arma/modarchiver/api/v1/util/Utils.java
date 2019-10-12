@@ -11,7 +11,6 @@ import lombok.extern.java.Log;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +25,7 @@ import java.util.zip.Checksum;
 @Log
 @UtilityClass
 public class Utils {
-	static final int DEFAULT_CHUNK_SIZE_KIB = 4;
+	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
 
@@ -53,8 +52,8 @@ public class Utils {
 	}
 
 	public static ApiObject parseFile(final Path path) throws IOException {
-		final File file = path.toFile();
-		return mapper.readValue(new FileInputStream(file), ApiObject.class);
+		return mapper.readValue(new FileInputStream(path.toFile()),
+			ApiObject.class);
 	}
 
 	/**
@@ -97,13 +96,11 @@ public class Utils {
 	/**
 	 * Create a Checksum object for the given input stream.
 	 *
-	 * @param inputSizeBytes Expected input source size in bytes.
-	 * @param chunkSizeKiB   Chunk size in KiB.
-	 * @param input          Data input stream.
+	 * @param chunkSizeKiB Chunk size in KiB.
+	 * @param input        Data input stream.
 	 * @return Checksum object for given input stream.
 	 */
 	static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
-		final int inputSizeBytes,
 		final int chunkSizeKiB,
 		final InputStream input
 	) throws IOException {
@@ -113,53 +110,36 @@ public class Utils {
 		final gr.arma3.arma.modarchiver.api.v1.Checksum.ChecksumBuilder b =
 			gr.arma3.arma.modarchiver.api.v1.Checksum.builder()
 				.fileHash(0)
-				.chunkSizeKiB(chunkSizeKiB)
-				.fileSizeBytes(inputSizeBytes);
+				.chunkSizeKiB(chunkSizeKiB);
 
-		final long remainingBytes;
 		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;
-		final int totalChunks = Utils.getNumberOfChunks(inputSizeBytes,
-			chunkSizeKiB);
-
 		final byte[] buffer = new byte[bufferSizeBytes];
 
-		if (inputSizeBytes < 1) {
-			return b.checksum(0L).build();
-		}
-
 		int totalBytesRead = 0; // This must match the file size at the end.
+		int bytesRead;
 
-		for (int i = 0; i < totalChunks; i++) {
-			final int bytesRead;
-			Arrays.fill(buffer, (byte) 0);
-			chunk.reset();
 
-			bytesRead = input.read(buffer);
-
-			if (bytesRead <= 0) {
-				break;
-			}
+		while ((bytesRead = input.read(buffer)) > 0) {
 
 			chunk.update(buffer, 0, bytesRead);
 			total.update(buffer, 0, bytesRead);
 
-			totalBytesRead += bytesRead;
-			b.checksum(chunk.getValue()).fileHash(total.getValue());
-		}
+			chunk.getValue();
 
-		b.fileSizeBytes(totalBytesRead);
+			totalBytesRead += bytesRead;
+
+			b.checksum(chunk.getValue())
+				.fileHash(total.getValue());
+
+
+			chunk.reset();
+			Arrays.fill(buffer, (byte) 0);
+		}
 
 		log.log(Level.INFO, "Read a total of {0} bytes.", totalBytesRead);
-		remainingBytes = input.available();
-		if (remainingBytes != 0) {
-			log.log(Level.WARNING,
-				Config.lang("total-bytes-read-mismatch",
-					inputSizeBytes,
-					totalBytesRead,
-					remainingBytes));
-		}
 
-		return b.build();
+		return b.fileSizeBytes(totalBytesRead)
+			.build();
 	}
 
 	public static ApiObject deserialize(final String raw) {
