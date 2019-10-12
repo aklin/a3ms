@@ -1,6 +1,8 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
+import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.Mod;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 
@@ -33,14 +35,20 @@ public class UtilsBIS {
 	}
 
 	public Mod.ModBuilder readMod(
-		final File modDirectory,
-		final Mod.ModBuilder builder
+		final File modDirectory//,
+//		final Mod.ModBuilder builder
 	) {
 		final Map<String, String> info;
+		final MetaInfo meta;
 		if (!modDirectory.isDirectory() || !modDirectory.getName().startsWith(
 			"@")) {
 			throw new RuntimeException("Invalid path: " + modDirectory.getPath());
 		}
+
+		meta = Meta.builder()
+			.name(modDirectory.getName())
+			.type("Mod")
+			.build();
 
 		try {
 			info = readCppFile(new File(modDirectory, "mod.cpp"),
@@ -48,18 +56,19 @@ public class UtilsBIS {
 
 			System.out.println("Read " + info.size() + " entries");
 
-			info.put("type", "Mod");
 			info.forEach((s, s2) -> {
 				System.out.println(s + ": " + s2);
 			});
 
-			return Objects.requireNonNull(Utils.<Mod>fromMap(info)).toBuilder();
+
+			return Objects.requireNonNull(Utils.<Mod>fromMap(info))
+				.toBuilder().meta(meta);
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		return builder.folderName(modDirectory.getName());
+		return null;
 	}
 
 	public static Map<String, String> readCppFile(final File... files) throws
@@ -86,7 +95,7 @@ public class UtilsBIS {
 		return Arrays.asList(match).contains(test);
 	}
 
-	public Mod.ModBuilder readMod(final File modDirectory) {
+/*	public Mod.ModBuilder readMod(final File modDirectory) {
 		return readMod(modDirectory, Mod.builder());
-	}
+	}*/
 }

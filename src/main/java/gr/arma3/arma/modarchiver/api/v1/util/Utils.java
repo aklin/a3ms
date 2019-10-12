@@ -3,6 +3,7 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
@@ -31,7 +32,7 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
-	private static final TypeReference<BaseObject> apiRef;
+	private static final TypeReference<?> apiRef;
 
 	static {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -41,6 +42,10 @@ public class Utils {
 		mapper.configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+			false);
+		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
+			true);
 		apiRef = new TypeReference<>() {
 			@Override
 			public Type getType() {
@@ -155,7 +160,7 @@ public class Utils {
 			.build();
 	}
 
-	public static <E extends BaseObject> E deserialize(final String raw) {
+	public static <E> E deserialize(final String raw) {
 		try {
 			return (E) mapper.readValue(raw, apiRef);
 		} catch (JsonProcessingException e) {

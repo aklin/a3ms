@@ -67,17 +67,18 @@ class UtilsTest {
 	}
 
 	@Test
-	void testToString() {
+	void testDeserialize() {
 		final Checksum c = Checksum.builder()
 			.checksum(0L)
 			.chunkSizeKiB(1)
 			.fileSizeBytes(0)
 			.fileHash(0)
 			.build();
-		final String s = c.toString();
-		System.out.println(s);
+//		final String s = c.toString();
+//		System.out.println(s);
 
-		assertEquals(c, Utils.deserialize(c.toString()));
+		assertEquals(Utils.serialize(c),
+			Utils.serialize(Utils.deserialize(Utils.serialize(c))));
 	}
 
 	Stream<InputStream> getFileStreams() {

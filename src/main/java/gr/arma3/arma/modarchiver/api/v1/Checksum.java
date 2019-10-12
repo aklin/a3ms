@@ -18,6 +18,8 @@ import java.util.List;
 @EqualsAndHashCode
 public class Checksum implements MetaInfo {
 
+	private final String name;
+
 	@NotEmpty(message = "type must not be empty.")
 	private final String type;
 
@@ -52,6 +54,7 @@ public class Checksum implements MetaInfo {
 	@JsonCreator
 	protected static Checksum deserialise(
 		@JsonProperty("type") String type,
+		@JsonProperty("name") String name,
 		@JsonProperty("fileHash") long fileHash,
 		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
 		@JsonProperty("checksums") List<Long> checksums,
@@ -59,6 +62,7 @@ public class Checksum implements MetaInfo {
 	) {
 		return Checksum.builder()
 			.type(type)
+			.name(name)
 			.fileHash(fileHash)
 			.chunkSizeKiB(chunkSizeKiB)
 			.fileSizeBytes(fileSizeBytes)

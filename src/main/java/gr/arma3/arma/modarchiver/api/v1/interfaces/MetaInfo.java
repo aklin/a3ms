@@ -14,7 +14,7 @@ import gr.arma3.arma.modarchiver.api.v1.*;
 	property = "type")
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = Mod.class, name = "Mod"),
-	@JsonSubTypes.Type(value = Meta.class, name = "Meta"),
+	@JsonSubTypes.Type(value = Meta.class, name = "meta"),
 	@JsonSubTypes.Type(value = ModFile.class, name = "ModFile"),
 	@JsonSubTypes.Type(value = Checksum.class, name = "Checksum"),
 	@JsonSubTypes.Type(value = Modset.class, name = "Modset"),
