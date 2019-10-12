@@ -44,7 +44,7 @@ public class Checksum extends AbstractV1ApiObject {
 
 	@JsonCreator
 	protected static Checksum deserialise(
-		@JsonProperty("friendlyName") String name,
+		@JsonProperty("name") String name,
 		@JsonProperty("fileHash") long fileHash,
 		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
 		@JsonProperty("fileSizeBytes") int fileSizeBytes

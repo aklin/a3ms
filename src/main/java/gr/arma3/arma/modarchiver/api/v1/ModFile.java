@@ -22,8 +22,8 @@ import java.nio.file.Path;
 @JsonDeserialize(builder = ModFile.ModFileBuilder.class)
 public class ModFile extends AbstractV1ApiObject {
 
-	@NotEmpty(message = "friendlyName must not be empty.")
-	private final String friendlyName;
+	@NotEmpty(message = "name must not be empty.")
+	private final String name;
 
 	@NotNull(message = "filePath is required.")
 	private final Path filePath;

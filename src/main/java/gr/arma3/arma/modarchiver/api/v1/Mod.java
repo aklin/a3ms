@@ -18,8 +18,7 @@ import java.util.TreeSet;
 @Getter
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
-//@JsonDeserialize(builder = Mod.ModBuilder.class)
-public class Mod extends AbstractV1ApiObject {
+public class Mod extends AbstractV1ApiObject implements Revisable {
 	private final String folderName;
 	private final String description;
 	private final String version;

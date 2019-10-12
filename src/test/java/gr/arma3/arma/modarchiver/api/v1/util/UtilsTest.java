@@ -56,6 +56,8 @@ class UtilsTest {
 				new ByteArrayInputStream(bytes)
 			);
 
+			System.out.println(checksum);
+
 			assertEquals(hash, checksum.getFileHash());
 
 			return checksum;

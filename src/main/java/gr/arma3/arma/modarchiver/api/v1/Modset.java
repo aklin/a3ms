@@ -1,11 +1,13 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -18,13 +20,19 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(builder = Modset.ModsetBuilder.class)
-public class Modset extends AbstractV1ApiObject {
-	private final String friendlyName;
+public class Modset extends AbstractV1ApiObject implements Revisable {
 	private final String description;
 	private final List<Mod> modList;
 	private transient int modListHashCode;
 
+	@Override
+	@JsonIgnore
+	public Instant getLastRevision() {
+		return modList.stream()
+			.map(Mod::getLastRevision)
+			.max(Comparator.naturalOrder())
+			.orElse(Instant.EPOCH);
+	}
 
 	/**
 	 * Create a new modset containing the common mods found in

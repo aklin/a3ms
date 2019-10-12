@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.java.Log;
 
+import javax.validation.constraints.NotEmpty;
+
 @Log
 @Getter
 @EqualsAndHashCode
@@ -22,6 +24,7 @@ public abstract class AbstractV1ApiObject implements ApiObject {
 	}
 
 	private final String name;
+	@NotEmpty
 	private final String type;
 
 	/**
