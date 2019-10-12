@@ -2,9 +2,13 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Describable;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotEmpty;
 import java.time.Instant;
@@ -17,9 +21,11 @@ import java.util.TreeSet;
  * @since 1.0
  */
 @Getter
-@SuperBuilder(toBuilder = true)
-@EqualsAndHashCode(callSuper = true)
-public class Mod extends AbstractV1ApiObject implements Revisable, Describable {
+@Builder(toBuilder = true)
+@EqualsAndHashCode
+public class Mod implements ApiObject, Revisable, Describable {
+
+	private final MetaInfo meta;
 	/**
 	 * Mod directory name. Begins with '@'.
 	 */

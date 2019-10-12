@@ -2,6 +2,10 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Describable;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
@@ -20,10 +24,10 @@ import java.util.Set;
  */
 @Getter
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class Repository extends AbstractV1ApiObject
-	implements Revisable, Describable {
-
+@EqualsAndHashCode
+public class Repository
+	implements ApiObject<Repository>, Revisable, Describable {
+	private final MetaInfo meta;
 	/**
 	 * All modsets defined in this repository.
 	 */

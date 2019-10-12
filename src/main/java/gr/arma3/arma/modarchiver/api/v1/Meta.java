@@ -2,11 +2,11 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 import lombok.extern.java.Log;
 
 import javax.validation.constraints.NotEmpty;
@@ -14,35 +14,26 @@ import javax.validation.constraints.NotEmpty;
 @Log
 @Getter
 @EqualsAndHashCode
-@SuperBuilder(toBuilder = true)
+@Builder
 @AllArgsConstructor
-public abstract class AbstractV1ApiObject implements ApiObject {
+public class Meta implements MetaInfo {
 	private static final long serialVersionUID;
 
 	static {
 		serialVersionUID = 1000L;
 	}
 
+	@NotEmpty(message = "name must not be empty.")
 	private final String name;
-	@NotEmpty
+	@NotEmpty(message = "type must not be empty.")
 	private final String type;
 
-	/**
-	 * Pretty-print this object.
-	 *
-	 * @return Json representation of this object.
-	 */
-	@Override
-	public final String toString() {
-		return Utils.serialize(this);
-	}
-
 	@JsonCreator
-	protected static AbstractV1ApiObject deserialise(
+	protected static Meta deserialise(
 		@JsonProperty("name") String name,
 		@JsonProperty("type") String type
 	) {
-		return Checksum.builder()
+		return Meta.builder()
 			.name(name)
 			.type(type)
 			.build();

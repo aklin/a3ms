@@ -1,11 +1,11 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 
@@ -16,16 +16,15 @@ import java.nio.file.Path;
  */
 
 @Getter
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-@JsonDeserialize(builder = ModFile.ModFileBuilder.class)
-public class ModFile extends AbstractV1ApiObject {
+@Builder
+@EqualsAndHashCode
+//@JsonDeserialize(builder = ModFile.ModFileBuilder.class)
+public class ModFile implements ApiObject {
 
 	/**
 	 * File name, not including path.
 	 */
-	@NotEmpty(message = "name must not be empty.")
-	private final String name;
+	private final MetaInfo meta;
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.
@@ -39,5 +38,6 @@ public class ModFile extends AbstractV1ApiObject {
 	 */
 	@NotNull
 	private final Checksum checksum;
+
 }
 

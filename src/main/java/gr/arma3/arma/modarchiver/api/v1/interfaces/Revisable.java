@@ -1,4 +1,4 @@
-package gr.arma3.arma.modarchiver.api.v1;
+package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
 import java.time.Instant;
 

@@ -1,10 +1,9 @@
-package gr.arma3.arma.modarchiver.api.v1;
+package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
-import java.io.Serializable;
+import gr.arma3.arma.modarchiver.api.v1.*;
 
 /**
  * @since 1.0
@@ -15,6 +14,7 @@ import java.io.Serializable;
 	property = "type")
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = Mod.class, name = "Mod"),
+	@JsonSubTypes.Type(value = Meta.class, name = "Meta"),
 	@JsonSubTypes.Type(value = ModFile.class, name = "ModFile"),
 	@JsonSubTypes.Type(value = Checksum.class, name = "Checksum"),
 	@JsonSubTypes.Type(value = Modset.class, name = "Modset"),
@@ -22,7 +22,7 @@ import java.io.Serializable;
 	// \(value = (\w+)\.class\)
 	// \(value = $1\.class\, name = "$1")
 })
-public interface ApiObject extends Nameable, Serializable {
+public interface MetaInfo extends BaseObject, Nameable, Describable {
 
 	String getType();
 }

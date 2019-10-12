@@ -2,6 +2,7 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
@@ -14,8 +15,11 @@ import java.util.List;
 
 @Getter
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class Checksum extends AbstractV1ApiObject {
+@EqualsAndHashCode
+public class Checksum implements MetaInfo {
+
+	@NotEmpty(message = "type must not be empty.")
+	private final String type;
 
 	/**
 	 * Checksums of all chunks of this file. Chunks size is obtained from
@@ -47,14 +51,15 @@ public class Checksum extends AbstractV1ApiObject {
 
 	@JsonCreator
 	protected static Checksum deserialise(
-		@JsonProperty("name") String name,
+		@JsonProperty("type") String type,
 		@JsonProperty("fileHash") long fileHash,
 		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
+		@JsonProperty("checksums") List<Long> checksums,
 		@JsonProperty("fileSizeBytes") int fileSizeBytes
 	) {
 		return Checksum.builder()
+			.type(type)
 			.fileHash(fileHash)
-			.name(name)
 			.chunkSizeKiB(chunkSizeKiB)
 			.fileSizeBytes(fileSizeBytes)
 			.build();

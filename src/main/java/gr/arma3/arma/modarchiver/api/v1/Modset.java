@@ -1,9 +1,12 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.experimental.SuperBuilder;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -18,11 +21,12 @@ import java.util.List;
  */
 
 @Getter
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
-public class Modset extends AbstractV1ApiObject implements Revisable {
+@Builder
+@EqualsAndHashCode
+public class Modset implements ApiObject<Modset>, Revisable {
 	private final String description;
 	private final List<Mod> modList;
+	private final MetaInfo meta;
 	private transient int modListHashCode;
 
 	@Override
