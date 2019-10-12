@@ -5,13 +5,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.nio.file.Path;
 
 /**
- * A file that belongs to a mod.
+ * A file that belongs to a {@link Mod}.
  *
  * @since 1.0
  */
@@ -22,21 +21,23 @@ import java.nio.file.Path;
 @JsonDeserialize(builder = ModFile.ModFileBuilder.class)
 public class ModFile extends AbstractV1ApiObject {
 
+	/**
+	 * File name, not including path.
+	 */
 	@NotEmpty(message = "name must not be empty.")
 	private final String name;
 
+	/**
+	 * File path (including name) relative to the {@link Mod} directory.
+	 */
 	@NotNull(message = "filePath is required.")
 	private final Path filePath;
 
 	/**
-	 * File size in bytes.
+	 * Checksum information. Client can use this info to determine which parts
+	 * of the files they should update.
 	 */
-	@Min(value = 1, message = "Minimum file size is 0 bytes.")
-	private final int fileSizeBytes;
-
-	/**
-	 * Checksum for the entire file. For quick and dirty comparisons.
-	 */
-	private final long checksum;
+	@NotNull
+	private final Checksum checksum;
 }
 

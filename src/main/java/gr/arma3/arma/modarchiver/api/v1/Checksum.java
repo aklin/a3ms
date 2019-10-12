@@ -15,7 +15,6 @@ import java.util.List;
 @Getter
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
-//@JsonDeserialize(builder = Checksum.ChecksumBuilder.class)
 public class Checksum extends AbstractV1ApiObject {
 
 	/**
@@ -39,6 +38,10 @@ public class Checksum extends AbstractV1ApiObject {
 	@Min(value = 1, message = "Minimum chunk size is 1 KiB.")
 	private final int chunkSizeKiB;
 
+	/**
+	 * File size in bytes.
+	 */
+	@Min(value = 0, message = "Minimum file size is 0 bytes.")
 	private final int fileSizeBytes;
 
 
