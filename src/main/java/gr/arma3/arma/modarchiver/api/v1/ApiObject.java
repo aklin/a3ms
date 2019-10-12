@@ -22,21 +22,7 @@ import java.io.Serializable;
 	// \(value = (\w+)\.class\)
 	// \(value = $1\.class\, name = "$1")
 })
-public interface ApiObject extends FriendlyName, Serializable {
+public interface ApiObject extends Nameable, Serializable {
 
-/*	default String getTypeName() {
-		return this.getClass().getName().substring(
-			this.getClass().getPackageName().length() + 1
-		);
-	}*/
-
-//	default String getTypeDocumentation() {
-//		return "";
-//	}
-
-	@Override
-	default String getFriendlyName() {
-		return "";
-	}
-
+	String getType();
 }

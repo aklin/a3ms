@@ -7,10 +7,8 @@ import lombok.extern.java.Log;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -47,7 +45,15 @@ public class UtilsBIS {
 		try {
 			info = readCppFile(new File(modDirectory, "mod.cpp"),
 				new File(modDirectory, "meta.cpp"));
-			Utils.fromMap(info);
+
+			System.out.println("Read " + info.size() + " entries");
+
+			info.put("type", "Mod");
+			info.forEach((s, s2) -> {
+				System.out.println(s + ": " + s2);
+			});
+
+			return Objects.requireNonNull(Utils.<Mod>fromMap(info)).toBuilder();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -62,16 +68,18 @@ public class UtilsBIS {
 
 		for (File file : files) {
 			lines.addAll(Files.lines(file.toPath())
-				.filter(s -> anyOf(s, keywords))
 				.collect(Collectors.toList()));
 		}
 
 		return lines.stream()
 			.map(cpp::matcher)
+			.filter(Matcher::matches)
+			.filter(matcher -> anyOf(matcher.group(1), keywords))
 			.collect(Collectors.toMap(
 				matcher -> matcher.group(1),
-				matcher -> matcher.group(2))
-			);
+				matcher -> matcher.group(2),
+				(s, s2) -> s
+			));
 	}
 
 	private boolean anyOf(final String test, final String... match) {

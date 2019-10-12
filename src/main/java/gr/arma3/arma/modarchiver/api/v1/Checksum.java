@@ -51,7 +51,7 @@ public class Checksum extends AbstractV1ApiObject {
 	) {
 		return Checksum.builder()
 			.fileHash(fileHash)
-			.friendlyName(name)
+			.name(name)
 			.chunkSizeKiB(chunkSizeKiB)
 			.fileSizeBytes(fileSizeBytes)
 			.build();
