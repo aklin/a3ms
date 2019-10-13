@@ -2,14 +2,16 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 
 import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.Mod;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,26 +22,19 @@ import java.util.stream.Collectors;
 @Log
 @UtilityClass
 public class UtilsBIS {
-	private static final String[] keywords;
 	private static final Pattern cpp;
 
 	static {
 		//keyword = "value";
-		cpp = Pattern.compile("\\s*(\\w+)\\s*=\\s*\"(.*)\"\\s*;");
-		keywords = new String[]{
-			"name",
-			"description",
-			"timestamp",
-			"publishedid",
-		};
+		cpp = Pattern.compile("\\s*(\\w+)\\s*=\\s*\"([[^\"].]*)\"\\s*;");
+
 	}
 
 	public Mod.ModBuilder readMod(
-		final File modDirectory//,
-//		final Mod.ModBuilder builder
+		final File modDirectory
 	) {
 		final Map<String, String> info;
-		final MetaInfo meta;
+		final Meta.MetaBuilder meta;
 		if (!modDirectory.isDirectory() || !modDirectory.getName().startsWith(
 			"@")) {
 			throw new RuntimeException("Invalid path: " + modDirectory.getPath());
@@ -47,28 +42,36 @@ public class UtilsBIS {
 
 		meta = Meta.builder()
 			.name(modDirectory.getName())
-			.type("Mod")
-			.build();
+			.type("Mod");
 
 		try {
-			info = readCppFile(new File(modDirectory, "mod.cpp"),
-				new File(modDirectory, "meta.cpp"));
+			info = readCppFile(
+				new File(modDirectory, "mod.cpp"),
+				new File(modDirectory, "meta.cpp")
+			);
+
+
+			System.out.println("----------======After=========------");
+			info.forEach((k, v) -> System.out.println(k + ": " + v));
 
 			System.out.println("Read " + info.size() + " entries");
 
-			info.forEach((s, s2) -> {
-				System.out.println(s + ": " + s2);
-			});
-
-
-			return Objects.requireNonNull(Utils.<Mod>fromMap(info))
-				.toBuilder().meta(meta);
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			log.severe(e.getLocalizedMessage());
+			return null;
 		}
 
-		return null;
+		final Instant lastRevision = Instant.ofEpochSecond(Long.parseLong(
+			info.getOrDefault("timestamp", "0")) / 100000);
+
+		meta.description(info.getOrDefault("description", ""));
+
+		return Mod.builder()
+			.version(lastRevision.toString())
+//				.folderStructure()
+			.lastRevision(lastRevision)
+			.meta(meta.build());
 	}
 
 	public static Map<String, String> readCppFile(final File... files) throws
@@ -76,14 +79,18 @@ public class UtilsBIS {
 		final List<String> lines = new ArrayList<>();
 
 		for (File file : files) {
+			System.out.println("Loading " + file.getPath());
 			lines.addAll(Files.lines(file.toPath())
 				.collect(Collectors.toList()));
+			System.out.println("\tNew list size: " + lines.size());
 		}
+
+		System.out.println("Lines-------");
+		lines.forEach(System.out::println);
 
 		return lines.stream()
 			.map(cpp::matcher)
 			.filter(Matcher::matches)
-			.filter(matcher -> anyOf(matcher.group(1), keywords))
 			.collect(Collectors.toMap(
 				matcher -> matcher.group(1),
 				matcher -> matcher.group(2),
@@ -91,11 +98,4 @@ public class UtilsBIS {
 			));
 	}
 
-	private boolean anyOf(final String test, final String... match) {
-		return Arrays.asList(match).contains(test);
-	}
-
-/*	public Mod.ModBuilder readMod(final File modDirectory) {
-		return readMod(modDirectory, Mod.builder());
-	}*/
 }

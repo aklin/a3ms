@@ -1,20 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
-import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import gr.arma3.arma.modarchiver.api.v1.Meta;
 
-public interface ApiObject<This extends ApiObject>
-	extends BaseObject, JsonSerializable {
+public interface ApiObject extends JsonSerializable {
 
-	MetaInfo getMeta();
-
-	@Override
-	default This deserialize() {
-		return null;
-	}
-
-	@Override
-	default String serialize() {
-		return Utils.serialize(this);
-	}
+	Meta getMeta();
 
 }

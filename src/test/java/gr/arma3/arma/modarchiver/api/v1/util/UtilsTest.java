@@ -2,6 +2,7 @@ package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.github.snksoft.crc.CRC;
 import gr.arma3.arma.modarchiver.api.v1.Checksum;
+import gr.arma3.arma.modarchiver.api.v1.Mod;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -39,9 +40,9 @@ class UtilsTest {
 
 	@Test
 	void testMinFileSize() {
-		final Checksum c = Checksum.builder().fileSizeBytes(-1).build();
+		final Mod mod = Mod.builder().build();
 
-		assertFalse(Utils.validate(c));
+		assertFalse(Utils.validate(mod));
 	}
 
 	private static Checksum testChecksum(final InputStream inputStream) {
@@ -68,17 +69,11 @@ class UtilsTest {
 
 	@Test
 	void testDeserialize() {
-		final Checksum c = Checksum.builder()
-			.checksum(0L)
-			.chunkSizeKiB(1)
-			.fileSizeBytes(0)
-			.fileHash(0)
+		final Mod mod = Mod.builder()
 			.build();
-//		final String s = c.toString();
-//		System.out.println(s);
 
-		assertEquals(Utils.serialize(c),
-			Utils.serialize(Utils.deserialize(Utils.serialize(c))));
+		assertEquals(Utils.serialize(mod),
+			Utils.serialize(Utils.deserialize(Utils.serialize(mod))));
 	}
 
 	Stream<InputStream> getFileStreams() {

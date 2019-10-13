@@ -3,12 +3,12 @@ package gr.arma3.arma.modarchiver.api.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.TreeSet;
 
@@ -23,16 +23,19 @@ import java.util.TreeSet;
 @EqualsAndHashCode
 public class Mod implements ApiObject, Revisable {
 
-	private final MetaInfo meta;
+	@NotNull
+	private final Meta meta;
 
 	/**
 	 * Mod version. Auto-populated from mod.cpp and meta.cpp files.
 	 */
+	@NotNull
 	private final String version;
 	/**
 	 * Get the most recent modification date of all files described
 	 * by this object.
 	 */
+	@NotNull
 	private final Instant lastRevision;
 
 	/**
@@ -44,7 +47,7 @@ public class Mod implements ApiObject, Revisable {
 	@JsonCreator
 	protected static Mod deserialise(
 		@JsonProperty("folderName") String folderName,
-		@JsonProperty("meta") MetaInfo meta,
+		@JsonProperty("meta") Meta meta,
 		@JsonProperty("version") String version,
 		@JsonProperty("lastRevision") Instant lastRevision,
 		@JsonProperty("folderStructure") TreeSet<ModFile> folderStructure

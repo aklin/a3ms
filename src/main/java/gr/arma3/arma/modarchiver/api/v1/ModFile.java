@@ -1,7 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import java.nio.file.Path;
  */
 
 @Getter
-@Builder
+@Builder(toBuilder = true)
 @EqualsAndHashCode
 //@JsonDeserialize(builder = ModFile.ModFileBuilder.class)
 public class ModFile implements ApiObject {
@@ -24,7 +23,7 @@ public class ModFile implements ApiObject {
 	/**
 	 * File name, not including path.
 	 */
-	private final MetaInfo meta;
+	private final Meta meta;
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.

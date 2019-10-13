@@ -5,8 +5,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.Instant;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsBISTest {
 	private static File testMod;
@@ -19,7 +20,15 @@ class UtilsBISTest {
 	@Test
 	void readMod() {
 		final Mod mod = UtilsBIS.readMod(testMod).build();
+		final Instant lastRevision = Instant.ofEpochSecond(0);
+
 		assertNotNull(mod);
-		System.out.println(mod);
+		assertNotNull(mod.getMeta());
+		assertEquals(lastRevision.toString(), mod.getVersion());
+		assertEquals(lastRevision, mod.getLastRevision());
+		assertNotNull(mod.getMeta().getDescription());
+		assertNotEquals("", mod.getMeta().getDescription());
+//		assertEquals("", mod.getMeta());
+		System.out.println(Utils.serialize(mod));
 	}
 }

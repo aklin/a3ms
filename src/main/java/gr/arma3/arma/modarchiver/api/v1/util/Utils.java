@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.BaseObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.JsonSerializable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 
@@ -17,10 +17,9 @@ import javax.validation.Validator;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.zip.CRC32;
@@ -48,30 +47,20 @@ public class Utils {
 			true);
 		apiRef = new TypeReference<>() {
 			@Override
-			public Type getType() {
+			public java.lang.reflect.Type getType() {
 				return super.getType();
 			}
 		};
-	}
-
-	public static <E extends BaseObject> E fromMap(final Map<String, String> map) {
-		try {
-			return deserialize(mapper.writer().writeValueAsString(map));
-		} catch (JsonProcessingException e) {
-			log.severe(e.getMessage());
-		}
-		return null;
 	}
 
 	static int getSizeKiB(final Path path) {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
-	public static ApiObject<? extends ApiObject> parseFile(final Path path) throws
+	public static ApiObject parseFile(final Path path) throws
 		IOException {
-		return (ApiObject<? extends ApiObject>) mapper.readValue(new FileInputStream(
-				path.toFile()),
-			apiRef);
+		return (ApiObject) mapper.readValue(new FileInputStream(
+			path.toFile()), apiRef);
 	}
 
 	/**
@@ -80,8 +69,8 @@ public class Utils {
 	 * @param object API object to validate.
 	 * @return True if no errors occurred.
 	 */
-	public static boolean validate(final BaseObject object) {
-		final Set<ConstraintViolation<BaseObject>> errors =
+	public static boolean validate(final Object object) {
+		final Set<ConstraintViolation<Object>> errors =
 			validator.validate(object);
 
 		errors.stream()
@@ -160,16 +149,20 @@ public class Utils {
 			.build();
 	}
 
-	public static <E> E deserialize(final String raw) {
+	public static <E extends JsonSerializable> E deserialize(final String raw) {
 		try {
-			return (E) mapper.readValue(raw, apiRef);
+			return (E) mapper
+				.readValue(
+					Optional.ofNullable(raw)
+						.orElse("---"),
+					apiRef);
 		} catch (JsonProcessingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static String serialize(BaseObject serializable) {
+	public static String serialize(JsonSerializable serializable) {
 		try {
 			return mapper
 				.writerWithDefaultPrettyPrinter()

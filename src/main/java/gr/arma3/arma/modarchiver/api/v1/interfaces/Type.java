@@ -5,9 +5,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gr.arma3.arma.modarchiver.api.v1.*;
 
-/**
- * @since 1.0
- */
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
 	include = JsonTypeInfo.As.PROPERTY,
@@ -22,7 +19,7 @@ import gr.arma3.arma.modarchiver.api.v1.*;
 	// \(value = (\w+)\.class\)
 	// \(value = $1\.class\, name = "$1")
 })
-public interface MetaInfo extends BaseObject, Nameable, Describable {
+public interface Type extends JsonSerializable {
 
 	String getType();
 }
