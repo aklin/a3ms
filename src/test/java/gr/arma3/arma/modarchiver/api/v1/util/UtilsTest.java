@@ -1,8 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.github.snksoft.crc.CRC;
-import gr.arma3.arma.modarchiver.api.v1.Checksum;
 import gr.arma3.arma.modarchiver.api.v1.Mod;
+import gr.arma3.arma.modarchiver.api.v1.ModFile;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,22 +48,22 @@ class UtilsTest {
 		assertFalse(Utils.validate(Mod.builder().version(null).build()));
 	}
 
-	private static Checksum testChecksum(final InputStream inputStream) {
+	private static ModFile testModFile(final InputStream inputStream) {
 		try (inputStream) {
 			//we need bytes to run our separate crc32 trial
 			final byte[] bytes = inputStream.readAllBytes();
 			final long hash = new CRC(CRC.Parameters.CRC32).calculateCRC(
 				bytes);
-			final Checksum checksum = Utils.calculateChecksums(
+			final ModFile ModFile = Utils.calculateChecksums(
 				Utils.DEFAULT_CHUNK_SIZE_KIB,
 				new ByteArrayInputStream(bytes)
 			);
 
-			System.out.println(checksum);
+			System.out.println(ModFile);
 
-			assertEquals(hash, checksum.getFileHash());
+			assertEquals(hash, ModFile.getFileHash());
 
-			return checksum;
+			return ModFile;
 		} catch (Exception e) {
 			fail(e);
 		}
@@ -83,7 +85,7 @@ class UtilsTest {
 				return new FileInputStream(file);
 			} catch (FileNotFoundException e) {
 				fail("Could not open [" + file.getAbsolutePath() + "]", e);
-				return null;
+				return InputStream.nullInputStream();
 			}
 		});
 	}
@@ -96,20 +98,34 @@ class UtilsTest {
 
 	@Test
 	void testLargeSource() {
-		UtilsTest.testChecksum(new ByteProducer());
+		UtilsTest.testModFile(new ByteProducer());
 	}
 
 	@Test
-	void calculateChecksumsAndCheckSerialization() {
+	void calculateModFilesAndCheckSerialization() {
 		getFileStreams()
 			.map(BufferedInputStream::new)
-			.map(UtilsTest::testChecksum)
-			.forEach(checksum -> {
+			.map(UtilsTest::testModFile)
+			.filter(Objects::nonNull)
+			.forEach(modFile -> {
+				final String serialized = Utils.serialize(modFile);
+				final ApiObject deserialized;
 
-				System.out.println(Utils.serialize(checksum));
+				assertNotNull(serialized);
+				assertNotEquals("", serialized);
 
-				assertTrue(checksum.equals(
-					Utils.deserialize(Utils.serialize(checksum))));
+				deserialized = Utils.deserialize(serialized);
+
+				assertNotNull(deserialized);
+				assertEquals("ModFile", deserialized.getType());
+
+				System.out.println("toString:\n" + deserialized.toString());
+				System.out.println("+++++++++++++++++++++++++");
+				System.out.println(Utils.serialize(modFile));
+				System.out.println(
+					"---------------------------------------------");
+
+				assertEquals(modFile, deserialized);
 			});
 	}
 

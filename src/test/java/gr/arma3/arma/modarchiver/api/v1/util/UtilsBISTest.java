@@ -20,7 +20,7 @@ class UtilsBISTest {
 	@Test
 	void readMod() {
 		final Mod mod = UtilsBIS.readMod(testMod).build();
-		final Instant lastRevision = Instant.ofEpochSecond(0);
+		final String lastRevision = Instant.ofEpochSecond(0).toString();
 
 		assertNotNull(mod);
 		assertNotNull(mod.getMeta());

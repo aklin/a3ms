@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.experimental.UtilityClass;
@@ -47,18 +48,6 @@ public class Utils {
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
 		types = new TypeReference[]{
-/*			new TypeReference<ApiObject>() {
-				@Override
-				public java.lang.reflect.Type getType() {
-					return super.getType();
-				}
-			},
-			new TypeReference<BaseObject>() {
-				@Override
-				public java.lang.reflect.Type getType() {
-					return super.getType();
-				}
-			},*/
 			new TypeReference<Typeable>() {
 				@Override
 				public java.lang.reflect.Type getType() {
@@ -135,17 +124,16 @@ public class Utils {
 	 * @param input        Data input stream.
 	 * @return Checksum object for given input stream.
 	 */
-	static gr.arma3.arma.modarchiver.api.v1.Checksum calculateChecksums(
+	static ModFile calculateChecksums(
 		final int chunkSizeKiB,
 		final InputStream input
 	) throws IOException {
 		final Checksum chunk = new CRC32(); // Single chunk checksum
 		final Checksum total = new CRC32(); // Checksum for entire file
 
-		final gr.arma3.arma.modarchiver.api.v1.Checksum.ChecksumBuilder b =
-			gr.arma3.arma.modarchiver.api.v1.Checksum.builder()
-				.fileHash(0)
-				.chunkSizeKiB(chunkSizeKiB);
+		final ModFile.ModFileBuilder b = ModFile.builder()
+			.fileHash(0)
+			.chunkSizeKiB(chunkSizeKiB);
 
 		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;
 		final byte[] buffer = new byte[bufferSizeBytes];
@@ -178,17 +166,23 @@ public class Utils {
 	}
 
 	public static <E extends Typeable> E deserialize(final String raw) {
-		System.out.println("\tRaw: " + raw);
+//		System.out.println("\tRaw: " + raw);
 
-		return (E) Arrays.stream(types).map(
-			type -> {
+		return (E) Arrays.stream(types)
+			.filter(Objects::nonNull)
+			.map(type -> {
 				try {
 					return mapper.readValue(raw, type);
 				} catch (JsonProcessingException e) {
 					log.warning(e.getMessage());
-					return null;
+					log.warning(e.getLocation().toString());
+					log.warning(String.valueOf(e.getLocation()
+						.getCharOffset()));
+					log.warning(e.getLocation().getSourceRef().toString());
+					return Errors.getParsingError(
+						"Cannot create object from this input", raw);
 				}
-			}).filter(Objects::nonNull).findAny().orElse(null);
+			}).filter(Objects::nonNull).findAny().get();
 
 	}
 
@@ -196,10 +190,13 @@ public class Utils {
 		try {
 			final String s = mapper
 				.writerWithDefaultPrettyPrinter()
-				.writeValueAsString(serializable);
+				.writeValueAsString(serializable)
+				.trim();
 
-			System.out.println("serialize");
+			System.out.println("serialize====================");
 			System.out.println(s);
+			System.out.println("====================serialize");
+
 			return s;
 		} catch (JsonProcessingException e) {
 			log.severe(e.getMessage());
