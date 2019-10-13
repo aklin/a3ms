@@ -31,7 +31,7 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
-	private static final TypeReference<?> apiRef;
+	private static final TypeReference<? extends JsonSerializable> apiRef;
 
 	static {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -152,12 +152,12 @@ public class Utils {
 	public static <E extends JsonSerializable> E deserialize(final String raw) {
 		try {
 			return (E) mapper
-				.readValue(
+				.<E>readValue(
 					Optional.ofNullable(raw)
 						.orElse("---"),
-					apiRef);
+					(TypeReference<E>) apiRef);
 		} catch (JsonProcessingException e) {
-			e.printStackTrace();
+			log.severe(e.getMessage());
 		}
 		return null;
 	}
