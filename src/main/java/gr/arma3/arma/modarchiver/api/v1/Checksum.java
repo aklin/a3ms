@@ -2,7 +2,7 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Type;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Builder(toBuilder = true)
 @EqualsAndHashCode
-public class Checksum implements Type {
+public class Checksum implements Typeable {
 
 	@NotEmpty(message = "type must not be empty.")
 	private final String type;

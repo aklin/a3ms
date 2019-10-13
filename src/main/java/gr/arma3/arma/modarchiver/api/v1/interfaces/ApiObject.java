@@ -1,9 +1,10 @@
 package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
-import gr.arma3.arma.modarchiver.api.v1.Meta;
+/**
+ * Object entity. Has a Meta object with name, description, and labels.
+ */
+public interface ApiObject extends Typeable {
 
-public interface ApiObject extends JsonSerializable {
-
-	Meta getMeta();
+	MetaInfo getMeta();
 
 }

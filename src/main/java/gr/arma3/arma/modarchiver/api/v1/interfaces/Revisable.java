@@ -1,7 +1,5 @@
 package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
-import java.time.Instant;
-
 /**
  * Indicates that the data of this object can be updated.
  *
@@ -14,5 +12,5 @@ public interface Revisable {
 	 *
 	 * @return Last revision time.
 	 */
-	Instant getLastRevision();
+	String getLastRevision();
 }

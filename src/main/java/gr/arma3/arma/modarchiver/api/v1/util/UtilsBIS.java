@@ -41,8 +41,7 @@ public class UtilsBIS {
 		}
 
 		meta = Meta.builder()
-			.name(modDirectory.getName())
-			.type("Mod");
+			.name(modDirectory.getName());
 
 		try {
 			info = readCppFile(
@@ -62,12 +61,13 @@ public class UtilsBIS {
 			return null;
 		}
 
-		final Instant lastRevision = Instant.ofEpochSecond(Long.parseLong(
-			info.getOrDefault("timestamp", "0")) / 100000);
+		final String lastRevision = Instant.ofEpochSecond(Long.parseLong(
+			info.getOrDefault("timestamp", "0")) / 100000).toString();
 
 		meta.description(info.getOrDefault("description", ""));
 
 		return Mod.builder()
+			.type("Mod")
 			.version(lastRevision.toString())
 //				.folderStructure()
 			.lastRevision(lastRevision)

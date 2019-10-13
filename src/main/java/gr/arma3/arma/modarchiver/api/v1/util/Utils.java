@@ -7,21 +7,22 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.JsonSerializable;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -31,7 +32,7 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
-	private static final TypeReference<? extends JsonSerializable> apiRef;
+	private static final TypeReference[] types;
 
 	static {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -45,10 +46,24 @@ public class Utils {
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
-		apiRef = new TypeReference<>() {
-			@Override
-			public java.lang.reflect.Type getType() {
-				return super.getType();
+		types = new TypeReference[]{
+/*			new TypeReference<ApiObject>() {
+				@Override
+				public java.lang.reflect.Type getType() {
+					return super.getType();
+				}
+			},
+			new TypeReference<BaseObject>() {
+				@Override
+				public java.lang.reflect.Type getType() {
+					return super.getType();
+				}
+			},*/
+			new TypeReference<Typeable>() {
+				@Override
+				public java.lang.reflect.Type getType() {
+					return super.getType();
+				}
 			}
 		};
 	}
@@ -57,10 +72,23 @@ public class Utils {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
-	public static ApiObject parseFile(final Path path) throws
+	public static <T extends ApiObject> T parseFile(final Path path) throws
 		IOException {
-		return (ApiObject) mapper.readValue(new FileInputStream(
-			path.toFile()), apiRef);
+		final String raw = Files.lines(path)
+			.collect(Collectors.joining("--- !<"));
+		return deserialize(raw);
+/*
+		return Lists.asList(typeCache).stream().map(
+			type -> {
+				try {
+					return mapper.readValue(new FileInputStream(
+						path.toFile()), apiRef);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+			};
+*/
+
 	}
 
 	/**
@@ -143,30 +171,36 @@ public class Utils {
 			Arrays.fill(buffer, (byte) 0);
 		}
 
-		log.log(Level.INFO, "Read a total of {0} bytes.", totalBytesRead);
+		log.log(Level.FINER, "Read a total of {0} bytes.", totalBytesRead);
 
 		return b.fileSizeBytes(totalBytesRead)
 			.build();
 	}
 
-	public static <E extends JsonSerializable> E deserialize(final String raw) {
-		try {
-			return (E) mapper
-				.<E>readValue(
-					Optional.ofNullable(raw)
-						.orElse("---"),
-					(TypeReference<E>) apiRef);
-		} catch (JsonProcessingException e) {
-			log.severe(e.getMessage());
-		}
-		return null;
+	public static <E extends Typeable> E deserialize(final String raw) {
+		System.out.println("\tRaw: " + raw);
+
+		return (E) Arrays.stream(types).map(
+			type -> {
+				try {
+					return mapper.readValue(raw, type);
+				} catch (JsonProcessingException e) {
+					log.warning(e.getMessage());
+					return null;
+				}
+			}).filter(Objects::nonNull).findAny().orElse(null);
+
 	}
 
-	public static String serialize(JsonSerializable serializable) {
+	public static String serialize(Typeable serializable) {
 		try {
-			return mapper
+			final String s = mapper
 				.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(serializable);
+
+			System.out.println("serialize");
+			System.out.println(s);
+			return s;
 		} catch (JsonProcessingException e) {
 			log.severe(e.getMessage());
 			return "";

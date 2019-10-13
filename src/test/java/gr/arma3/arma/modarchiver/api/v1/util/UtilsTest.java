@@ -42,7 +42,8 @@ class UtilsTest {
 	void testMinFileSize() {
 		final Mod mod = Mod.builder().build();
 
-		assertFalse(Utils.validate(mod));
+		assertTrue(Utils.validate(Mod.builder().build()));
+		assertFalse(Utils.validate(Mod.builder().version(null).build()));
 	}
 
 	private static Checksum testChecksum(final InputStream inputStream) {
@@ -104,9 +105,11 @@ class UtilsTest {
 			.map(BufferedInputStream::new)
 			.map(UtilsTest::testChecksum)
 			.forEach(checksum -> {
+
 				System.out.println(Utils.serialize(checksum));
-				assertEquals(checksum,
-					Utils.deserialize(Utils.serialize(checksum)));
+
+				assertTrue(checksum.equals(
+					Utils.deserialize(Utils.serialize(checksum))));
 			});
 	}
 

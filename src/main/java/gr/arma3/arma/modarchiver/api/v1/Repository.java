@@ -24,6 +24,11 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class Repository implements ApiObject, Revisable {
+
+	@NotEmpty(message = "type must not be empty.")
+	@Builder.Default
+	private final String type = "Repository";
+
 	private final Meta meta;
 	/**
 	 * All modsets defined in this repository.
@@ -51,10 +56,10 @@ public class Repository implements ApiObject, Revisable {
 	 */
 	@JsonIgnore
 	@JsonProperty("lastRevision")
-	public Instant getLastRevision() {
+	public String getLastRevision() {
 		return modsets.stream()
 			.map(Modset::getLastRevision)
 			.max(Comparator.naturalOrder())
-			.orElse(Instant.EPOCH);
+			.orElse(String.valueOf(Instant.EPOCH));
 	}
 }

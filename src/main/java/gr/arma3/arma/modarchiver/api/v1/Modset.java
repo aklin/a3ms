@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -24,19 +26,23 @@ import java.util.List;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class Modset implements ApiObject, Revisable {
-	private final String description;
+	@Nullable
 	private final List<Mod> modList;
 	@NotNull
 	private final Meta meta;
 	private transient int modListHashCode;
 
+	@NotEmpty(message = "type must not be empty.")
+	@Builder.Default
+	private final String type = "Modset";
+
 	@Override
 	@JsonIgnore
-	public Instant getLastRevision() {
+	public String getLastRevision() {
 		return modList.stream()
 			.map(Mod::getLastRevision)
 			.max(Comparator.naturalOrder())
-			.orElse(Instant.EPOCH);
+			.orElse(String.valueOf(Instant.EPOCH));
 	}
 
 	/**
