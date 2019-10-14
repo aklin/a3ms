@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -33,7 +32,6 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
-	private static final TypeReference[] types;
 
 	static {
 		validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -47,14 +45,6 @@ public class Utils {
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
-		types = new TypeReference[]{
-			new TypeReference<Typeable>() {
-				@Override
-				public java.lang.reflect.Type getType() {
-					return super.getType();
-				}
-			}
-		};
 	}
 
 	static int getSizeKiB(final Path path) {
@@ -66,18 +56,6 @@ public class Utils {
 		final String raw = Files.lines(path)
 			.collect(Collectors.joining("--- !<"));
 		return deserialize(raw);
-/*
-		return Lists.asList(typeCache).stream().map(
-			type -> {
-				try {
-					return mapper.readValue(new FileInputStream(
-						path.toFile()), apiRef);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-			};
-*/
-
 	}
 
 	/**
@@ -166,23 +144,23 @@ public class Utils {
 	}
 
 	public static <E extends Typeable> E deserialize(final String raw) {
-//		System.out.println("\tRaw: " + raw);
-
-		return (E) Arrays.stream(types)
-			.filter(Objects::nonNull)
-			.map(type -> {
-				try {
-					return mapper.readValue(raw, type);
-				} catch (JsonProcessingException e) {
-					log.warning(e.getMessage());
-					log.warning(e.getLocation().toString());
-					log.warning(String.valueOf(e.getLocation()
-						.getCharOffset()));
-					log.warning(e.getLocation().getSourceRef().toString());
-					return Errors.getParsingError(
-						"Cannot create object from this input", raw);
+		try {
+			return mapper.readValue(raw, new TypeReference<E>() {
+				@Override
+				public java.lang.reflect.Type getType() {
+					return super.getType();
 				}
-			}).filter(Objects::nonNull).findAny().get();
+			});
+		} catch (JsonProcessingException e) {
+			log.warning(e.getMessage());
+			log.warning(e.getLocation().toString());
+			log.warning(String.valueOf(e.getLocation()
+				.getCharOffset()));
+			log.warning(e.getLocation().getSourceRef().toString());
+			Errors.getParsingError("Cannot create object from this input",
+				raw);
+			return null;
+		}
 
 	}
 

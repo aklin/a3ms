@@ -10,6 +10,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.Instant;
 
 @Data
 @Builder(toBuilder = true)
@@ -35,4 +36,8 @@ public class InternalError implements ApiObject {
 
 	@Nullable
 	private final String details;
+
+	@NotNull
+	@Builder.Default
+	private final String timedate = Instant.now().toString();
 }

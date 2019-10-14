@@ -107,14 +107,16 @@ class UtilsTest {
 			.map(BufferedInputStream::new)
 			.map(UtilsTest::testModFile)
 			.filter(Objects::nonNull)
+			.peek(Utils::validate)
 			.forEach(modFile -> {
 				final String serialized = Utils.serialize(modFile);
 				final ApiObject deserialized;
 
 				assertNotNull(serialized);
 				assertNotEquals("", serialized);
+				assertEquals(serialized, Utils.serialize(modFile));
 
-				deserialized = Utils.deserialize(serialized);
+				deserialized = Utils.<ModFile>deserialize(serialized);
 
 				assertNotNull(deserialized);
 				assertEquals("ModFile", deserialized.getType());
