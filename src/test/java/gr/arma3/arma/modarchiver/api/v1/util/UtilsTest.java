@@ -49,21 +49,28 @@ class UtilsTest {
 	}
 
 	private static ModFile testModFile(final InputStream inputStream) {
+		return testModFile(inputStream, empty);
+	}
+
+	private static ModFile testModFile(
+		final InputStream inputStream,
+		final File file
+	) {
 		try (inputStream) {
 			//we need bytes to run our separate crc32 trial
 			final byte[] bytes = inputStream.readAllBytes();
 			final long hash = new CRC(CRC.Parameters.CRC32).calculateCRC(
 				bytes);
-			final ModFile ModFile = Utils.calculateChecksums(
+			final ModFile modFile = Utils.calculateChecksums(
 				Utils.DEFAULT_CHUNK_SIZE_KIB,
+				file,
 				new ByteArrayInputStream(bytes)
 			);
 
-			System.out.println(ModFile);
+			assertEquals(hash, modFile.getFileHash());
+			assertTrue(Utils.validate(modFile));
 
-			assertEquals(hash, ModFile.getFileHash());
-
-			return ModFile;
+			return modFile;
 		} catch (Exception e) {
 			fail(e);
 		}
@@ -75,6 +82,7 @@ class UtilsTest {
 		final Mod mod = Mod.builder()
 			.build();
 
+		assertNotNull(mod.getMeta());
 		assertEquals(Utils.serialize(mod),
 			Utils.serialize(Utils.deserialize(Utils.serialize(mod))));
 	}
@@ -120,12 +128,6 @@ class UtilsTest {
 
 				assertNotNull(deserialized);
 				assertEquals("ModFile", deserialized.getType());
-
-				System.out.println("toString:\n" + deserialized.toString());
-				System.out.println("+++++++++++++++++++++++++");
-				System.out.println(Utils.serialize(modFile));
-				System.out.println(
-					"---------------------------------------------");
 
 				assertEquals(modFile, deserialized);
 			});

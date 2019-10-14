@@ -10,6 +10,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
 import java.util.TreeSet;
 
 /**
@@ -36,7 +37,7 @@ public class Mod implements ApiObject, Revisable {
 	 */
 	@NotNull(message = "Version field must not be null.")
 	@Builder.Default
-	private final String version = "";
+	private final String version = LocalDateTime.now().toString();
 	/**
 	 * Get the most recent modification date of all files described
 	 * by this object.

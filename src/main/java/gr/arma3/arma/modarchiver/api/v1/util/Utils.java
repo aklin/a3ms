@@ -5,7 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
@@ -15,6 +17,7 @@ import lombok.extern.java.Log;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -41,6 +44,10 @@ public class Utils {
 		mapper.configure(JsonParser.Feature.ALLOW_YAML_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.IGNORE_UNDEFINED, true);
 		mapper.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, true);
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+		mapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED,
+			false);
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
@@ -104,6 +111,7 @@ public class Utils {
 	 */
 	static ModFile calculateChecksums(
 		final int chunkSizeKiB,
+		final File file,
 		final InputStream input
 	) throws IOException {
 		final Checksum chunk = new CRC32(); // Single chunk checksum
@@ -111,7 +119,13 @@ public class Utils {
 
 		final ModFile.ModFileBuilder b = ModFile.builder()
 			.fileHash(0)
-			.chunkSizeKiB(chunkSizeKiB);
+			.fileSizeBytes(Files.size(file.toPath()))
+			.chunkSizeKiB(chunkSizeKiB)
+			.filePath(file.getPath())
+			.meta(Meta.builder()
+				.name(file.getName())
+				.build());
+
 
 		final int bufferSizeBytes = chunkSizeKiB * Size.KiB;
 		final byte[] buffer = new byte[bufferSizeBytes];
@@ -153,10 +167,6 @@ public class Utils {
 			});
 		} catch (JsonProcessingException e) {
 			log.warning(e.getMessage());
-			log.warning(e.getLocation().toString());
-			log.warning(String.valueOf(e.getLocation()
-				.getCharOffset()));
-			log.warning(e.getLocation().getSourceRef().toString());
 			Errors.getParsingError("Cannot create object from this input",
 				raw);
 			return null;
@@ -166,16 +176,10 @@ public class Utils {
 
 	public static String serialize(Typeable serializable) {
 		try {
-			final String s = mapper
+			return mapper
 				.writerWithDefaultPrettyPrinter()
 				.writeValueAsString(serializable)
 				.trim();
-
-			System.out.println("serialize====================");
-			System.out.println(s);
-			System.out.println("====================serialize");
-
-			return s;
 		} catch (JsonProcessingException e) {
 			log.severe(e.getMessage());
 			return "";

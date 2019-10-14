@@ -12,8 +12,6 @@ import lombok.Singular;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -35,21 +33,22 @@ public class ModFile implements ApiObject {
 	/**
 	 * File name, not including path.
 	 */
-	private final MetaInfo meta;
+	@NotNull(message = "meta must not be null.")
+	@Builder.Default
+	private final MetaInfo meta = Meta.builder().build();
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.
 	 */
-	@NotNull(message = "filePath is required.")
-	private final Path filePath;
+	@NotEmpty(message = "filePath must not be empty.")
+	private final String filePath;
 
 	/**
 	 * Checksums of all chunks of this file. Chunks size is obtained from
 	 * {@link #getChunkSizeKiB()}.
 	 */
 	@Singular
-	@NotEmpty
-	@Size(min = 1, message = "At least 1 checksum must be present.")
+	@NotNull
 	private final List<Long> checksums;
 
 	/**
@@ -68,12 +67,12 @@ public class ModFile implements ApiObject {
 	 * File size in bytes.
 	 */
 	@Min(value = 0, message = "Minimum file size is 0 bytes.")
-	private final int fileSizeBytes;
+	private final long fileSizeBytes;
 
 
 	@JsonCreator
 	public static ModFile deserialize(
-		@JsonProperty("meta") MetaInfo meta,
+		@JsonProperty("meta") Meta meta,
 		@JsonProperty("filePath") String path,
 		@JsonProperty("fileHash") long fileHash,
 		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
@@ -82,7 +81,7 @@ public class ModFile implements ApiObject {
 	) {
 		return ModFile.builder()
 			.meta(meta)
-			.filePath(Path.of(path))
+			.filePath(path)
 			.fileHash(fileHash)
 			.chunkSizeKiB(chunkSizeKiB)
 			.checksums(checksums)
