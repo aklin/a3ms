@@ -24,6 +24,23 @@ public class CreateResource implements Callable<Boolean> {
 	)
 	private File modFolder;
 
+	@CommandLine.Option(
+		defaultValue = "false",
+		names = {"--noValidation"},
+		description = "Turns off input validation. Only use if you know what" +
+			" " +
+			"you're doing."
+	)
+	private boolean validateInput;
+
+	@CommandLine.Option(
+		defaultValue = "false",
+		names = {"--dryRun"},
+		description = "Do not change server state, but pretend to do so. " +
+			"Ignores --noValidation."
+	)
+	private boolean dryRun;
+
 	/**
 	 * Computes a result, or throws an exception if unable to do so.
 	 *
