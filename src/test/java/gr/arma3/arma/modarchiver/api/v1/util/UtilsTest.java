@@ -105,6 +105,18 @@ class UtilsTest {
 	}
 
 	@Test
+	void testNullValidation() {
+		try {
+			//TODO Might change this to return false if null. Seems more
+			// concise.
+			Utils.validate(null);
+		} catch (IllegalArgumentException e) {
+			return;
+		}
+		fail("Validator did not crap out on null argument.");
+	}
+
+	@Test
 	void testLargeSource() {
 		UtilsTest.testModFile(new ByteProducer());
 	}
