@@ -1,36 +1,14 @@
 package gr.arma3.arma.modarchiver.state.operations;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.java.Log;
-
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import java.time.LocalDateTime;
 
 @Log
 @Getter
-@Builder(toBuilder = true)
-public class Update<E extends ApiObject> implements Operation {
-
-	@NotNull
-	private final E resource;
-
-	@NotNull
-	@Builder.Default
-	private final String user = "default";
-
-	@NotNull
-	@PastOrPresent
-	@Builder.Default
-	private final String eventTime = LocalDateTime.now().toString();
-
-	@Builder.Default
-	private final boolean dryRun = false;
-
-	@Builder.Default
-	private final boolean requireLock = true;
+@SuperBuilder(toBuilder = true)
+public class Update<E extends ApiObject> extends AbstractOperation<E> {
 
 	/**
 	 * When an object implementing interface <code>Runnable</code> is used

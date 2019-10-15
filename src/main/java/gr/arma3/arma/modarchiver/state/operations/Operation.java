@@ -11,7 +11,8 @@ import javax.validation.constraints.PastOrPresent;
  *
  * @param <E>
  */
-public interface Operation<E extends ApiObject> extends Runnable {
+public interface Operation<E extends ApiObject>
+	extends Runnable, AutoCloseable {
 
 	/**
 	 * Resource to be operated on. Must not be null.
@@ -50,5 +51,10 @@ public interface Operation<E extends ApiObject> extends Runnable {
 	 * @return
 	 */
 	boolean isRequireLock();
+
+	/**
+	 * @return Object has the global lock.
+	 */
+	boolean isLocked();
 
 }
