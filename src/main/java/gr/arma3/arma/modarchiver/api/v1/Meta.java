@@ -18,13 +18,13 @@ import java.util.Map;
 public class Meta implements MetaInfo {
 
 	@Nullable
-	@Singular
-	private final Map<String, String> labels;
-
-	@Nullable
 	private final String name;
 	@Nullable
 	private final String description;
+
+	@Nullable
+	@Singular
+	private final Map<String, String> labels;
 
 	@JsonCreator
 	public Meta(
