@@ -1,8 +1,7 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
 import com.github.snksoft.crc.CRC;
-import gr.arma3.arma.modarchiver.api.v1.Mod;
-import gr.arma3.arma.modarchiver.api.v1.ModFile;
+import gr.arma3.arma.modarchiver.api.v1.*;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
@@ -41,11 +40,19 @@ class UtilsTest {
 
 
 	@Test
-	void testMinFileSize() {
+	void testValidation() {
 		final Mod mod = Mod.builder().build();
 
 		assertTrue(Utils.validate(Mod.builder().build()));
-		assertFalse(Utils.validate(Mod.builder().version(null).build()));
+		assertFalse(Utils.validate(ModFile.builder().build()));
+
+		assertFalse(Utils.validate(Modset.builder().build()));
+		assertTrue(Utils.validate(Modset.builder()
+			.meta(Meta.builder().build())
+			.build()));
+
+		assertTrue(Utils.validate(Meta.builder().build()));
+		assertTrue(Utils.validate(Repository.builder().build()));
 	}
 
 	private static ModFile testModFile(final InputStream inputStream) {

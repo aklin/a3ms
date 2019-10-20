@@ -12,6 +12,7 @@ import lombok.Singular;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,21 +22,18 @@ import java.util.List;
  */
 
 @Getter
-@Builder(toBuilder = true)
+@Builder()
 @EqualsAndHashCode
-//@JsonDeserialize(builder = ModFile.ModFileBuilder.class)
 public class ModFile implements ApiObject {
 
-	@NotEmpty(message = "type must not be empty.")
-	@Builder.Default
+	//	@NotEmpty(message = "type must not be empty.")	@Builder.Default
 	private final String type = "ModFile";
 
 	/**
 	 * File name, not including path.
 	 */
 	@NotNull(message = "meta must not be null.")
-	@Builder.Default
-	private final MetaInfo meta = Meta.builder().build();
+	private final MetaInfo meta;
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.
@@ -71,22 +69,27 @@ public class ModFile implements ApiObject {
 
 
 	@JsonCreator
-	public static ModFile deserialize(
-		@JsonProperty("meta") Meta meta,
+	public ModFile(
+		@JsonProperty("meta") MetaInfo meta,
 		@JsonProperty("filePath") String path,
+		@JsonProperty("checksums") List<Long> checksums,
 		@JsonProperty("fileHash") long fileHash,
 		@JsonProperty("chunkSizeKiB") int chunkSizeKiB,
-		@JsonProperty("checksums") List<Long> checksums,
-		@JsonProperty("fileSizeBytes") int fileSizeBytes
+		@JsonProperty("fileSizeBytes") long fileSizeBytes
 	) {
-		return ModFile.builder()
-			.meta(meta)
-			.filePath(path)
-			.fileHash(fileHash)
-			.chunkSizeKiB(chunkSizeKiB)
-			.checksums(checksums)
-			.fileSizeBytes(fileSizeBytes)
-			.build();
+
+		this.filePath = path;
+		this.fileHash = fileHash;
+		this.chunkSizeKiB = Math.max(1, chunkSizeKiB);
+		this.fileSizeBytes = fileSizeBytes;
+		this.meta = meta != null ? meta : Meta.builder().build();
+		this.checksums = new ArrayList<>();
+
+		this.checksums.addAll(checksums);
+		/*!= null
+
+			? checksums
+			: Collections.emptyList();*/
 	}
 
 }

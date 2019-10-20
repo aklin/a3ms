@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.Meta;
+import gr.arma3.arma.modarchiver.api.v1.Mod;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
@@ -22,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.logging.Level;
@@ -80,6 +83,15 @@ public class Utils {
 			.forEach(log::severe);
 
 		return errors.isEmpty();
+	}
+
+	public static Instant parseLastRevision(final Mod mod) {
+		try {
+			return Instant.parse(mod.getLastRevision());
+		} catch (DateTimeParseException e) {
+			Errors.fromThrowable(e);
+			return Instant.EPOCH;
+		}
 	}
 
 	/**

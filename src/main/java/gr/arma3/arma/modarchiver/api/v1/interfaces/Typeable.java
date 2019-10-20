@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gr.arma3.arma.modarchiver.api.v1.*;
 
+import javax.validation.constraints.NotEmpty;
+
 
 /**
  * Any type of object that can be serialized and deserialized to JSON or YAML.
@@ -24,5 +26,6 @@ import gr.arma3.arma.modarchiver.api.v1.*;
 })
 public interface Typeable {
 
+	@NotEmpty(message = "type must not be empty.")
 	String getType();
 }

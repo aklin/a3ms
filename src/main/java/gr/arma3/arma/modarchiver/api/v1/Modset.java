@@ -1,18 +1,14 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -25,25 +21,18 @@ import java.util.List;
 @Getter
 @Builder(toBuilder = true)
 @EqualsAndHashCode
-public class Modset implements ApiObject, Revisable {
-	@Nullable
-	private final List<Mod> modList;
+public class Modset implements ApiObject {
+
+	@NotEmpty
+	@Builder.Default
+	private final List<Mod> modList = Collections.emptyList();
+
 	@NotNull
 	private final Meta meta;
 	private transient int modListHashCode;
 
-	@NotEmpty(message = "type must not be empty.")
 	@Builder.Default
 	private final String type = "Modset";
-
-	@Override
-	@JsonIgnore
-	public String getLastRevision() {
-		return modList.stream()
-			.map(Mod::getLastRevision)
-			.max(Comparator.naturalOrder())
-			.orElse(String.valueOf(Instant.EPOCH));
-	}
 
 	/**
 	 * Create a new modset containing the common mods found in

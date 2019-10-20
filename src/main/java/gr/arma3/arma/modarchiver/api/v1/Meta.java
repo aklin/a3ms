@@ -6,37 +6,34 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Singular;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.Map;
 
 @Getter
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-//@AllArgsConstructor
 public class Meta implements MetaInfo {
 
-	@JsonCreator
-	public Meta(
-		@JsonProperty("name") String name,
-		@JsonProperty("description") String description
-	) {
-		this.name = name;
-		this.description = description;
-	}
+	@Nullable
+	@Singular
+	private final Map<String, String> labels;
 
 	@Nullable
 	private final String name;
 	@Nullable
 	private final String description;
 
-
-	/*protected static Meta deserialise(
+	@JsonCreator
+	public Meta(
 		@JsonProperty("name") String name,
-		@JsonProperty("description") String description
+		@JsonProperty("description") String description,
+		@JsonProperty("labels") Map<String, String> labels
 	) {
-		return Meta.builder()
-			.name(name)
-			.description(description)
-			.build();
-	}*/
+		this.name = name;
+		this.description = description;
+		this.labels = labels == null ? Collections.emptyMap() : labels;
+	}
 }
