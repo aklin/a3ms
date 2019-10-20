@@ -3,7 +3,6 @@ package gr.arma3.arma.modarchiver.api.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +32,7 @@ public class ModFile implements ApiObject {
 	 * File name, not including path.
 	 */
 	@NotNull(message = "meta must not be null.")
-	private final MetaInfo meta;
+	private final Meta meta;
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.
@@ -70,7 +69,7 @@ public class ModFile implements ApiObject {
 
 	@JsonCreator
 	public ModFile(
-		@JsonProperty("meta") MetaInfo meta,
+		@JsonProperty("meta") Meta meta,
 		@JsonProperty("filePath") String path,
 		@JsonProperty("checksums") List<Long> checksums,
 		@JsonProperty("fileHash") long fileHash,
@@ -78,7 +77,7 @@ public class ModFile implements ApiObject {
 		@JsonProperty("fileSizeBytes") long fileSizeBytes
 	) {
 
-		this.filePath = path;
+		this.filePath = path != null ? path : "";
 		this.fileHash = fileHash;
 		this.chunkSizeKiB = Math.max(1, chunkSizeKiB);
 		this.fileSizeBytes = fileSizeBytes;
