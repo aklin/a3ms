@@ -1,23 +1,23 @@
 package gr.arma3.arma.modarchiver;
 
-import gr.arma3.arma.modarchiver.cli.CreateResource;
+import gr.arma3.arma.modarchiver.api.v1.util.Errors;
+import gr.arma3.arma.modarchiver.cli.App;
 import picocli.CommandLine;
 
-@CommandLine.Command(
-	description = "Create a new resource based on input.",
-	name = "create",
-	mixinStandardHelpOptions = true,
-	version = "1.0"
-)
 public class Main implements Runnable {
 
 	@CommandLine.Parameters(index = "0", description = "hello")
 	private String verb;
 
 	public static void main(String[] args) {
-		final String[] a = {"-f", "test.yaml"};
+//		final String[] a = {"-f", "test.yaml"};
+		final CommandLine cmd = new CommandLine(App.class);
 
-		new CommandLine(CreateResource.class).execute(a);
+		cmd.parseArgs(args)
+			.errors()
+			.forEach(Errors::fromThrowable);
+
+		System.exit(cmd.execute(args));
 	}
 
 	/**

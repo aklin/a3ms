@@ -5,7 +5,6 @@ import lombok.ToString;
 import picocli.CommandLine;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 
 /*@CommandLine.Command(
 	description = "Create a new resource based on input.",
@@ -14,32 +13,19 @@ import java.util.concurrent.Callable;
 	version = "1.0"
 )*/
 @ToString
-public class CreateResource implements Callable<Boolean> {
+public class CreateResource extends ResourceOperation {
 
 
 	@CommandLine.Option(
 		defaultValue = ".",
 		names = {"-f", "--file"},
-		description = "Path to the mod folder."
+		description = "Path to the mod folder(s)."
 	)
 	private File modFolder;
 
-	@CommandLine.Option(
-		defaultValue = "false",
-		names = {"--noValidation"},
-		description = "Turns off input validation. Only use if you know what" +
-			" " +
-			"you're doing."
-	)
-	private boolean validateInput;
-
-	@CommandLine.Option(
-		defaultValue = "false",
-		names = {"--dryRun"},
-		description = "Do not change server state, but pretend to do so. " +
-			"Ignores --noValidation."
-	)
-	private boolean dryRun;
+	CreateResource() {
+		super(null);
+	}
 
 	/**
 	 * Computes a result, or throws an exception if unable to do so.

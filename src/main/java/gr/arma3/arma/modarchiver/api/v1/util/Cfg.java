@@ -17,12 +17,12 @@ import java.util.logging.Logger;
  */
 @UtilityClass
 @ToString
-public final class Config {
+public final class Cfg {
 	private static final Logger logger;
 	private static final Properties properties;
 
 	static {
-		logger = Logger.getLogger(Config.class.getName());
+		logger = Logger.getLogger(Cfg.class.getName());
 		properties = new Properties();
 
 		final String[] configFiles = {

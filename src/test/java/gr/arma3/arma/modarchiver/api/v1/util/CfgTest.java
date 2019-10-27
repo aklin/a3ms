@@ -9,25 +9,25 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class ConfigTest {
+class CfgTest {
 
 	@Test
 	@Order(1)
 	void testStaticInitialization() {
-		Config.print();
-		Config.contains(null);
+		Cfg.print();
+		Cfg.contains(null);
 	}
 
 	@Test
 	@Order(2)
 	void testConfigHasLoaded() {
-		assertTrue(Config.size() > 0);
+		assertTrue(Cfg.size() > 0);
 	}
 
 	@Test
 	void testBooleanFalse() {
-		assertFalse(Config.contains(null));
-		assertFalse(Config.contains("does not exist"));
+		assertFalse(Cfg.contains(null));
+		assertFalse(Cfg.contains("does not exist"));
 	}
 
 	//	@Test
