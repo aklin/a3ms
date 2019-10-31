@@ -77,4 +77,12 @@ public class Modset implements ApiObject {
 		result.removeAll(removeAll.modList);
 		return Modset.builder().modList(result).build();
 	}
+
+	public int size() {
+		return getModList().size();
+	}
+
+	public boolean isEmpty() {
+		return getModList().isEmpty();
+	}
 }
