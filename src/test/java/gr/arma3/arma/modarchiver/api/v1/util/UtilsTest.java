@@ -52,7 +52,9 @@ class UtilsTest {
 			.build()));
 
 		assertTrue(Utils.validate(Meta.builder().build()));
-		assertTrue(Utils.validate(Repository.builder().build()));
+		assertTrue(Utils.validate(Repository.builder()
+			.address("localhost")
+			.build()));
 	}
 
 	private static ModFile testModFile(final InputStream inputStream) {

@@ -10,14 +10,14 @@ public class Main implements Runnable {
 	private String verb;
 
 	public static void main(String[] args) {
-//		final String[] a = {"-f", "test.yaml"};
+		final String[] a = {"-f", "test.yaml"};
 		final CommandLine cmd = new CommandLine(App.class);
 
 		cmd.parseArgs(args)
 			.errors()
 			.forEach(Errors::fromThrowable);
 
-		System.exit(cmd.execute(args));
+		System.exit(cmd.execute(a));
 	}
 
 	/**

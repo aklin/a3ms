@@ -9,6 +9,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -21,12 +22,14 @@ import java.util.Set;
 @EqualsAndHashCode
 public class Repository implements ApiObject {
 
+	@NotEmpty
 	private final String type = "Repository";
 
 	private final Meta meta;
 	/**
 	 * All modsets defined in this repository.
 	 */
+	@NotNull
 	private final Set<Modset> modsets;
 
 	/**
@@ -49,9 +52,9 @@ public class Repository implements ApiObject {
 		@JsonProperty("address") String address
 	) {
 		this.meta = meta;
-		this.modsets = modsets;
-		this.description = description != null ? description : "";
-		this.address = address != null ? address : "";
+		this.modsets = modsets != null ? modsets : Collections.emptySet();
+		this.description = description != null ? description.trim() : "";
+		this.address = address != null ? address.trim() : "";
 	}
 
 }

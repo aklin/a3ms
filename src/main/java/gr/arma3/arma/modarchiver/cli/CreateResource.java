@@ -6,12 +6,12 @@ import picocli.CommandLine;
 
 import java.io.File;
 
-/*@CommandLine.Command(
+@CommandLine.Command(
 	description = "Create a new resource based on input.",
 	name = "create",
 	mixinStandardHelpOptions = true,
 	version = "1.0"
-)*/
+)
 @ToString
 public class CreateResource extends ResourceOperation {
 

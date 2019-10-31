@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +22,7 @@ import java.util.List;
 @EqualsAndHashCode
 public class Modset implements ApiObject {
 
-	@NotEmpty
+	@NotNull
 	@Builder.Default
 	private final List<Mod> modList = Collections.emptyList();
 
