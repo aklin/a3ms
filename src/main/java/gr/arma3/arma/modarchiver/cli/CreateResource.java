@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.cli;
 
+import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.ToString;
 import picocli.CommandLine;
@@ -14,7 +15,6 @@ import java.io.File;
 )
 @ToString
 public class CreateResource extends ResourceOperation {
-
 
 	@CommandLine.Option(
 		defaultValue = ".",
@@ -36,6 +36,13 @@ public class CreateResource extends ResourceOperation {
 	@Override
 	public Boolean call() throws Exception {
 		System.out.println(this);
-		return Utils.validate(Utils.parseFile(modFolder.toPath()));
+
+		this.setExitCondition(
+			Utils.validate(Utils.parseFile(modFolder.toPath()))
+				? ExitCode.App.OK
+				: ExitCode.ResourceOperation.NOT_FOUND
+		);
+
+		return isExitConditionError();
 	}
 }
