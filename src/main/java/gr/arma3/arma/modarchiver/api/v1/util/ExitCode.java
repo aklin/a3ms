@@ -11,6 +11,7 @@ public class ExitCode {
 	@Getter
 	public enum App implements ExitCondition {
 		OK(0, ""),
+		OK_DRY_RUN(0, "Success but nothing changed (used with --dryRun)"),
 		INIT_FAILURE(-1, "Internal failure."),
 		;
 
@@ -29,6 +30,8 @@ public class ExitCode {
 		NOT_READABLE(101,
 			"One or more files were located, but could not be read."),
 		PARSE_ERROR(110, "Syntax error."),
+		PERSISTENCE_ERROR(150,
+			"Error saving changes. Changes might be partially saved."),
 		;
 
 		private final int exitCode;

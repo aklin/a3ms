@@ -8,23 +8,22 @@ import lombok.Getter;
 import picocli.CommandLine;
 
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @Getter
-abstract class ResourceOperation<T extends ApiObject>
-	implements Callable<T>, CommandLine.IExitCodeGenerator {
-
-	private ExitCondition exitCondition;
+abstract class ResourceOperation
+	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
 
 	@NotNull(message = "Resource must not be null.")
-	private final T resource;
+	private final ApiObject resource;
+	private ExitCondition exitCondition = null;
 	private final boolean valid;
 	@CommandLine.Option(
 		defaultValue = "false",
 		names = {"--noValidation"},
 		description = "Turns off input validation. Only use if you know what" +
-			" " +
-			"you're doing."
+			" you're doing."
 	)
 	private boolean validateInput;
 	@CommandLine.Option(
@@ -33,12 +32,45 @@ abstract class ResourceOperation<T extends ApiObject>
 		description = "Do not change server state, but pretend to do so. " +
 			"Ignores --noValidation."
 	)
-	private boolean dryRun;
+	private boolean dryRun = false;
 
-	public ResourceOperation(final T resource) {
+
+	public ResourceOperation(final ApiObject resource) {
 		this.resource = resource;
 		this.valid = Utils.validate(this) && Utils.validate(resource);
 	}
+
+	public final OperationResult call() throws Exception {
+		ApiObject input = null;
+
+
+		try {
+			input = processInput();
+		} catch (Exception e) {
+			exitCondition = ExitCode.ResourceOperation.PARSE_ERROR;
+		}
+
+		if (!this.dryRun) try {
+			exitCondition = persistResult();
+		} catch (Exception e) {
+			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
+		}
+
+		return new OpResult(
+			exitCondition,
+			Optional
+				.ofNullable(input)
+				.orElse(null));
+	}
+
+	/**
+	 * Implement this method with persistence logic.
+	 *
+	 * @return Exit condition
+	 */
+	protected abstract ExitCondition persistResult();
+
+	protected abstract ApiObject processInput() throws Exception;
 
 	public final ExitCondition getExitCondition() {
 		return exitCondition;
