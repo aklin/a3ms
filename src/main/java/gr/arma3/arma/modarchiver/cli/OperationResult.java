@@ -7,5 +7,10 @@ public interface OperationResult {
 
 	ExitCondition getExitCondition();
 
+	/**
+	 * Get resulting resource.
+	 *
+	 * @return Resource.
+	 */
 	ApiObject getResource();
 }

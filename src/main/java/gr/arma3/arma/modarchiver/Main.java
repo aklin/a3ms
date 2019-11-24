@@ -2,22 +2,23 @@ package gr.arma3.arma.modarchiver;
 
 import gr.arma3.arma.modarchiver.api.v1.util.Errors;
 import gr.arma3.arma.modarchiver.cli.App;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import picocli.CommandLine;
 
+@Getter
+@RequiredArgsConstructor
 public class Main implements Runnable {
 
-	@CommandLine.Parameters(index = "0", description = "hello")
-	private String verb;
+	private final String[] args;
+	private int exitCode;
 
 	public static void main(String[] args) {
-		final String[] a = {"-f", "test.yaml"};
-		final CommandLine cmd = new CommandLine(App.class);
+		final Main instance = new Main(args);
 
-		cmd.parseArgs(args)
-			.errors()
-			.forEach(Errors::fromThrowable);
+		instance.run();
 
-		System.exit(cmd.execute(a));
+		System.exit(instance.exitCode);
 	}
 
 	/**
@@ -33,6 +34,14 @@ public class Main implements Runnable {
 	 */
 	@Override
 	public void run() {
+		final CommandLine cmd = new CommandLine(App.class);
 
+		cmd.parseArgs(args)
+			.errors()
+			.stream()
+			.peek(Errors::fromThrowable)
+			.findAny().ifPresentOrElse(
+			e -> this.exitCode = 1,
+			() -> this.exitCode = cmd.execute(args));
 	}
 }
