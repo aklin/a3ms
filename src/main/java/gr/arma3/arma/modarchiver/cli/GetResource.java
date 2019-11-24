@@ -33,7 +33,7 @@ public class GetResource extends ResourceOperation {
 	private String resourceIdentifier;
 
 	public GetResource() {
-		super(null);
+		System.out.println(this);
 	}
 
 

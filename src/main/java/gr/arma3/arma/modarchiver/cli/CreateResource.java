@@ -1,6 +1,5 @@
 package gr.arma3.arma.modarchiver.cli;
 
-import gr.arma3.arma.modarchiver.api.v1.Mod;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
@@ -26,9 +25,10 @@ public class CreateResource extends ResourceOperation {
 	)
 	private File modFolder;
 
-	CreateResource() {
-		super(Mod.builder().build());
+	public CreateResource() {
+		System.out.println(this);
 	}
+
 
 	/**
 	 * Computes a result, or throws an exception if unable to do so.

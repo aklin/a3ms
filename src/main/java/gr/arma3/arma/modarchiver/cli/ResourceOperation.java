@@ -3,11 +3,9 @@ package gr.arma3.arma.modarchiver.cli;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
-import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.Getter;
 import picocli.CommandLine;
 
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
@@ -15,10 +13,8 @@ import java.util.concurrent.Callable;
 abstract class ResourceOperation
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
 
-	@NotNull(message = "Resource must not be null.")
-	private final ApiObject resource;
 	private ExitCondition exitCondition = null;
-	private final boolean valid;
+
 	@CommandLine.Option(
 		defaultValue = "false",
 		names = {"--noValidation"},
@@ -34,11 +30,6 @@ abstract class ResourceOperation
 	)
 	private boolean dryRun = false;
 
-
-	public ResourceOperation(final ApiObject resource) {
-		this.resource = resource;
-		this.valid = Utils.validate(this) && Utils.validate(resource);
-	}
 
 	public final OperationResult call() throws Exception {
 		ApiObject input = null;
