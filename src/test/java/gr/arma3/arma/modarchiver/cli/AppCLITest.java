@@ -7,21 +7,18 @@ class AppCLITest {
 
 	@Test
 	void helpTest() {
-
-		final String[] args = {"help"};
-		final Main main = new Main(args);
-
-		main.run();
+		Main.callWithArg("help");
 	}
 
 
 	@Test
 	void versionTest() {
+		Main.callWithArg("-V");
+	}
 
-		final String[] args = {"-V"};
-		final Main main = new Main(args);
-
-		main.run();
+	@Test
+	void getTest() {
+		Main.callWithArg("get mod test");
 	}
 
 }

@@ -6,42 +6,58 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import picocli.CommandLine;
 
+import java.util.concurrent.Callable;
+
+
 @Getter
 @RequiredArgsConstructor
-public class Main implements Runnable {
+public class Main implements Callable<Integer> {
 
-	private final String[] args;
-	private int exitCode;
+	@CommandLine.Parameters
+	private static String[] args;
 
-	public static void main(String[] args) {
-		final Main instance = new Main(args);
+	public static void main(String[] args) throws Exception {
+		System.exit(callWithArgs(args));
+	}
 
-		instance.run();
+	public static int callWithArg(String argLine) {
+		return callWithArgs(argLine.split("\\s"));
+	}
 
-		System.exit(instance.exitCode);
+	public static int callWithArgs(String[] args) {
+		Main.args = args;
+		return new Main().call();
 	}
 
 	/**
-	 * When an object implementing interface <code>Runnable</code> is used
-	 * to create a thread, starting the thread causes the object's
-	 * <code>run</code> method to be called in that separately executing
-	 * thread.
-	 * <p>
-	 * The general contract of the method <code>run</code> is that it may
-	 * take any action whatsoever.
+	 * Computes a result, or throws an exception if unable to do so.
 	 *
-	 * @see Thread#run()
+	 * @return computed result
+	 * @throws Exception if unable to compute a result
 	 */
 	@Override
-	public void run() {
+	public Integer call() {
 		final CommandLine cmd = new CommandLine(App.class);
+		final CommandLine.ParseResult result;
 
-		cmd.parseArgs(args)
-			.errors()
-			.stream()
-			.peek(Errors::fromThrowable)
-			.findAny().ifPresentOrElse(
-			e -> this.exitCode = 1,
-			() -> this.exitCode = cmd.execute(args));
+		result = cmd.parseArgs(args);
+
+		if (!result.unmatched().isEmpty()) {
+			System.err.println("Unmatched arguments [" + result.unmatched()
+				.size() + "]:");
+
+			result.unmatched().forEach(s -> System.err.print(s + ", "));
+			System.err.println();
+			System.err.flush();
+
+			return 1;
+		}
+
+		result.errors()
+			.forEach(Errors::fromThrowable);
+
+		return result.errors().isEmpty()
+			? cmd.execute(args)
+			: 1;
 	}
 }

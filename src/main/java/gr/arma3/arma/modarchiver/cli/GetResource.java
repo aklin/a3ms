@@ -19,7 +19,6 @@ public class GetResource extends ResourceOperation {
 		defaultValue = "",
 		paramLabel = "TYPE",
 		description = "Resource type. Required."
-
 	)
 	private String resourceType;
 
