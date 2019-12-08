@@ -171,7 +171,7 @@ public class Utils {
 
 	public static <E extends Typeable> E deserialize(final String raw) {
 		try {
-			return mapper.readValue(raw, new TypeReference<E>() {
+			return mapper.readValue(raw, new TypeReference<>() {
 				@Override
 				public java.lang.reflect.Type getType() {
 					return super.getType();

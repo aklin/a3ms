@@ -26,8 +26,7 @@ public final class Cfg {
 		properties = new Properties();
 
 		final String[] configFiles = {
-			"language.properties",
-			"application.properties"
+			"application.properties",
 		};
 
 		for (final String file : configFiles) {
