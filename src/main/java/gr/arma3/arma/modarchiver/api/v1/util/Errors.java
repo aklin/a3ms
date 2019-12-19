@@ -1,6 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
-import gr.arma3.arma.modarchiver.api.v1.InternalError;
+import gr.arma3.arma.modarchiver.api.v1.UserInfoMessage;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 
@@ -8,8 +8,8 @@ import lombok.extern.java.Log;
 @UtilityClass
 public class Errors {
 
-	public static InternalError fromThrowable(final Throwable t) {
-		final InternalError e = InternalError.builder()
+	public static UserInfoMessage fromThrowable(final Throwable t) {
+		final UserInfoMessage e = UserInfoMessage.builder()
 			.message(t.getMessage())
 			.code("EXC")
 			.details(t.getCause().getMessage())
@@ -20,11 +20,11 @@ public class Errors {
 		return e;
 	}
 
-	public static InternalError getParsingError(
+	public static UserInfoMessage getParsingError(
 		final String message,
 		final String details
 	) {
-		final InternalError e = InternalError.builder()
+		final UserInfoMessage e = UserInfoMessage.builder()
 			.message(message)
 			.details(details)
 			.code("PARSERR")
@@ -33,11 +33,11 @@ public class Errors {
 		return e;
 	}
 
-	public static InternalError getValidationError(
+	public static UserInfoMessage getValidationError(
 		final String message,
 		final String details
 	) {
-		final InternalError e = InternalError.builder()
+		final UserInfoMessage e = UserInfoMessage.builder()
 			.message(message)
 			.details(details)
 			.code("VALERR")

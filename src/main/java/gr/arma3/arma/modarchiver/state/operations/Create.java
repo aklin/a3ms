@@ -1,7 +1,7 @@
 package gr.arma3.arma.modarchiver.state.operations;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.state.ServerState;
+import gr.arma3.arma.modarchiver.state.StateUtils;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.java.Log;
@@ -25,7 +25,7 @@ public class Create<E extends ApiObject> extends AbstractOperation<E> {
 	@Override
 	public void run() {
 
-		ServerState.create(getResource());
+		StateUtils.create(getResource());
 
 	}
 }

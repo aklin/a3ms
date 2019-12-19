@@ -15,7 +15,7 @@ import java.time.Instant;
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode
-public class InternalError implements ApiObject {
+public class UserInfoMessage implements ApiObject {
 	@NotEmpty(message = "type must not be empty.")
 	@Builder.Default
 	private final String type = "InternalError";
@@ -39,5 +39,5 @@ public class InternalError implements ApiObject {
 
 	@NotNull
 	@Builder.Default
-	private final String timedate = Instant.now().toString();
+	private final String datetime = Instant.now().toString();
 }
