@@ -31,7 +31,7 @@ public class ModFile implements ApiObject {
 	/**
 	 * File name, not including path.
 	 */
-	@NotNull(message = "meta must not be null.")
+	@NotNull
 	private final Meta meta;
 
 	/**

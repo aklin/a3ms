@@ -8,19 +8,16 @@ import lombok.EqualsAndHashCode;
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class UserInfoMessage implements ApiObject {
-	@NotEmpty(message = "type must not be empty.")
-	@Builder.Default
-	private final String type = "InternalError";
+	private final String type = "UserInfoMessage";
 
-	@NotNull(message = "Meta object must not be null.")
+	@NotNull
 	@Builder.Default
 	private final Meta meta = Meta.builder().build();
 
@@ -39,5 +36,5 @@ public class UserInfoMessage implements ApiObject {
 
 	@NotNull
 	@Builder.Default
-	private final String datetime = Instant.now().toString();
+	private final String datetime = LocalDateTime.now().toString();
 }

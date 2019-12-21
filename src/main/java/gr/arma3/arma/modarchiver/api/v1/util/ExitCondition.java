@@ -8,5 +8,7 @@ public interface ExitCondition extends Describable {
 		return ExitCode.App.INIT_FAILURE.getExitCode();
 	}
 
-	;
+	boolean isError();
+
+	String getDescription();
 }

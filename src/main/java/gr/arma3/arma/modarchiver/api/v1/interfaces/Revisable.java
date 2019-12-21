@@ -15,8 +15,7 @@ public interface Revisable<T extends Revisable> extends Comparable<T> {
 	 *
 	 * @return Last revision time.
 	 */
-//	@PastOrPresent
-	@NotNull(message = "lastRevision field must not be null.")
+	@NotNull
 	String getLastRevision();
 
 	@Override

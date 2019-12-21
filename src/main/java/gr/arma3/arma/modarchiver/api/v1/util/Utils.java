@@ -10,6 +10,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.Mod;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
+import gr.arma3.arma.modarchiver.api.v1.UserInfoMessage;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.experimental.UtilityClass;
@@ -196,5 +197,13 @@ public class Utils {
 			log.severe(e.getMessage());
 			return "";
 		}
+	}
+
+	public static UserInfoMessage fromExitCondition(final ExitCondition condition) {
+		return UserInfoMessage.builder()
+			.code(String.valueOf(condition.getExitCode()))
+			.severity(condition.isError() ? 10 : 0)
+			.message(condition.getDescription())
+			.build();
 	}
 }

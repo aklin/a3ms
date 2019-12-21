@@ -6,7 +6,6 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import lombok.Getter;
 import picocli.CommandLine;
 
-import java.util.Optional;
 import java.util.concurrent.Callable;
 
 @Getter
@@ -47,11 +46,7 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
 		}
 
-		return new OpResult(
-			exitCondition,
-			Optional
-				.ofNullable(input)
-				.orElse(null));
+		return new OpResult(exitCondition, input);
 	}
 
 	/**
