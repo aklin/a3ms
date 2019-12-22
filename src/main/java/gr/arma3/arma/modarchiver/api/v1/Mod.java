@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.TreeSet;
 
 /**
@@ -19,11 +18,11 @@ import java.util.TreeSet;
  * @since 1.0
  */
 @Getter
-@Builder(toBuilder = true)
 @EqualsAndHashCode
 public class Mod implements ApiObject, Revisable<Mod> {
 
-	private final String type;
+	private final String type = "Mod";
+	private final Class<Mod> classRef = Mod.class;
 
 	private final Meta meta;
 
@@ -44,18 +43,22 @@ public class Mod implements ApiObject, Revisable<Mod> {
 	private final TreeSet<ModFile> folderStructure;
 
 	@JsonCreator
+	@Builder(toBuilder = true)
 	public Mod(
-		@JsonProperty("folderName") String folderName,
 		@JsonProperty("meta") Meta meta,
 		@JsonProperty("version") String version,
 		@JsonProperty("lastRevision") String lastRevision,
 		@JsonProperty("folderStructure") TreeSet<ModFile> folderStructure
 	) {
-		this.type = "Mod";
-		this.meta = Optional.ofNullable(meta).orElse(Meta.builder().build());
 		this.folderStructure = folderStructure;
-		this.version = Optional.ofNullable(version).orElse(LocalDateTime.now()
-			.toString());
-		this.lastRevision = lastRevision == null ? this.version : lastRevision;
+		this.meta = meta != null
+			? meta
+			: Meta.builder().build();
+		this.version = version != null
+			? version
+			: LocalDateTime.now().toString();
+		this.lastRevision = lastRevision == null
+			? this.version
+			: lastRevision;
 	}
 }

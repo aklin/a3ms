@@ -67,8 +67,7 @@ public class UtilsBIS {
 		meta.description(info.getOrDefault("description", ""));
 
 		return Mod.builder()
-			.type("Mod")
-			.version(lastRevision.toString())
+			.version(lastRevision)
 //				.folderStructure()
 			.lastRevision(lastRevision)
 			.meta(meta.build());

@@ -25,4 +25,6 @@ public interface Typeable {
 
 	@NotEmpty(message = "type must not be empty.")
 	String getType();
+
+	Class<? extends Typeable> getClassRef();
 }

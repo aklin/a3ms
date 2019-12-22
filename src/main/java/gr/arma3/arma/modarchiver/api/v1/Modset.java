@@ -25,6 +25,7 @@ public class Modset implements ApiObject {
 	@NotNull
 	@Builder.Default
 	private final List<Mod> modList = Collections.emptyList();
+	private final Class<Modset> classRef = Modset.class;
 
 	@NotNull
 	private final Meta meta;

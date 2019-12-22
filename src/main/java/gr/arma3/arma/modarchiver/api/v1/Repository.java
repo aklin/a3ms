@@ -21,9 +21,8 @@ import java.util.Set;
 @Builder(toBuilder = true)
 @EqualsAndHashCode
 public class Repository implements ApiObject {
-
-	@NotEmpty
 	private final String type = "Repository";
+	private final Class<Repository> classRef = Repository.class;
 
 	private final Meta meta;
 	/**

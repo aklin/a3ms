@@ -1,6 +1,7 @@
 package gr.arma3.arma.modarchiver.cli;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import lombok.Getter;
@@ -46,7 +47,7 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
 		}
 
-		return new OpResult(exitCondition, input);
+		return new OpResult(exitCondition);
 	}
 
 	/**

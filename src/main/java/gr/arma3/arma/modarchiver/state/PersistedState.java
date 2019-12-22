@@ -2,7 +2,10 @@ package gr.arma3.arma.modarchiver.state;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
-import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import gr.arma3.arma.modarchiver.state.operations.OperationException;
+
+import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
 
 /**
  * State object. Used to retrieve resource hierarchies.
@@ -12,28 +15,40 @@ public interface PersistedState {
 	int LOOK_UP = 5521; //magic numbers
 	int LOOK_DOWN = 5256;
 
-	default <E extends ApiObject> E create(final E resource) {
-		Utils.validate(resource);
-
-		return null;
-	}
-
-	<E extends ApiObject> E update(final E resource);
-
-	<E extends ApiObject> boolean delete(final E resource);
+	<E extends ApiObject> FilesystemPersistedState create(final E resource);
 
 	/**
-	 * @param name
-	 * @param type
+	 * @param resource
+	 * @param <E>      Resource type.
+	 * @return State after the operation.
+	 */
+	@NotNull <E extends ApiObject> PersistedState update(final E resource);
+
+	/**
+	 * @param resource
+	 * @param <E>      Resource type.
+	 * @return State after the operation.
+	 */
+	@NotNull <E extends ApiObject> PersistedState delete(final E resource);
+
+	/**
+	 * @param name      Resource name.
 	 * @param direction
 	 * @param <E>
 	 * @return
 	 */
-	<E extends ApiObject> E get(
+	@NotNull <E extends ApiObject> E get(
+		final String name,
+		final Lookup direction
+	) throws OperationException;
+
+
+	@NotNull
+	ApiObject get(
 		final String name,
 		final Typeable type,
 		final Lookup direction
-	);
+	) throws OperationException;
 
 	/**
 	 * Get entity.
@@ -44,9 +59,9 @@ public interface PersistedState {
 	 * @return Object identified by name and/or type, or null.
 	 */
 	<E extends ApiObject> E get(
-		final String name,
-		final Typeable type
-	);
+		@Nullable final String name,
+		@Nullable final Typeable type
+	) throws OperationException;
 
 	enum Lookup {
 		/**

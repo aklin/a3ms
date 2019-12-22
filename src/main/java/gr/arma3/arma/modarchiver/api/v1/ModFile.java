@@ -3,10 +3,9 @@ package gr.arma3.arma.modarchiver.api.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Singular;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -21,24 +20,24 @@ import java.util.List;
  */
 
 @Getter
-@Builder()
+@Builder(toBuilder = true)
 @EqualsAndHashCode
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ModFile implements ApiObject {
 
-	//	@NotEmpty(message = "type must not be empty.")	@Builder.Default
-	private final String type = "ModFile";
-
+	String type = "ModFile";
+	Class<? extends Typeable> classRef = ModFile.class;
 	/**
 	 * File name, not including path.
 	 */
 	@NotNull
-	private final Meta meta;
+	Meta meta;
 
 	/**
 	 * File path (including name) relative to the {@link Mod} directory.
 	 */
 	@NotEmpty(message = "filePath must not be empty.")
-	private final String filePath;
+	String filePath;
 
 	/**
 	 * Checksums of all chunks of this file. Chunks size is obtained from
@@ -46,25 +45,25 @@ public class ModFile implements ApiObject {
 	 */
 	@Singular
 	@NotNull
-	private final List<Long> checksums;
+	List<Long> checksums;
 
 	/**
 	 * CRC of the entire file.
 	 */
-	private final long fileHash;
+	long fileHash;
 
 
 	/**
 	 * Chunk size in KiB. Must be > 0.
 	 */
 	@Min(value = 1, message = "Minimum chunk size is 1 KiB.")
-	private final int chunkSizeKiB;
+	int chunkSizeKiB;
 
 	/**
 	 * File size in bytes.
 	 */
 	@Min(value = 0, message = "Minimum file size is 0 bytes.")
-	private final long fileSizeBytes;
+	long fileSizeBytes;
 
 
 	@JsonCreator
@@ -85,11 +84,6 @@ public class ModFile implements ApiObject {
 		this.checksums = new ArrayList<>();
 
 		this.checksums.addAll(checksums);
-		/*!= null
-
-			? checksums
-			: Collections.emptyList();*/
 	}
 
 }
-
