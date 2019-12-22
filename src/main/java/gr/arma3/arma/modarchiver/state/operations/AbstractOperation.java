@@ -3,7 +3,6 @@ package gr.arma3.arma.modarchiver.state.operations;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
@@ -43,10 +42,8 @@ abstract class AbstractOperation<E extends ApiObject> implements Operation {
 	/**
 	 * Pretend to run but make no changes. Ignores {@link #isRequireLock()}.
 	 */
-	@Builder.Default
 	private final boolean dryRun;
 
-	@Builder.Default
 	private final boolean requireLock;
 
 	private boolean locked;

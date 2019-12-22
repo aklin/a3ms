@@ -20,7 +20,6 @@ import javax.validation.constraints.NotNull;
 	@JsonSubTypes.Type(value = Meta.class),
 	@JsonSubTypes.Type(value = ModFile.class),
 	@JsonSubTypes.Type(value = Modset.class),
-	@JsonSubTypes.Type(value = Namespace.class),
 	@JsonSubTypes.Type(value = Repository.class),
 })
 public interface Typeable {
