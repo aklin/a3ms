@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gr.arma3.arma.modarchiver.api.v1.*;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 
 /**
@@ -19,6 +20,7 @@ import javax.validation.constraints.NotEmpty;
 	@JsonSubTypes.Type(value = Meta.class),
 	@JsonSubTypes.Type(value = ModFile.class),
 	@JsonSubTypes.Type(value = Modset.class),
+	@JsonSubTypes.Type(value = Namespace.class),
 	@JsonSubTypes.Type(value = Repository.class),
 })
 public interface Typeable {
@@ -26,5 +28,6 @@ public interface Typeable {
 	@NotEmpty(message = "type must not be empty.")
 	String getType();
 
+	@NotNull
 	Class<? extends Typeable> getClassRef();
 }

@@ -1,5 +1,7 @@
 package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * @since 1.0
  */
@@ -11,6 +13,7 @@ public interface Nameable {
 	 *
 	 * @return user-friendly name
 	 */
+	@Pattern(regexp = "[\\w\\d_-]*")
 	default String getName() {
 		return "";
 	}

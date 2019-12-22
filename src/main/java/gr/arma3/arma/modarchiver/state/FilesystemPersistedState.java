@@ -8,7 +8,6 @@ import gr.arma3.arma.modarchiver.state.operations.OperationException;
 import lombok.Builder;
 
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.nio.file.Path;
 
 /**
@@ -52,13 +51,16 @@ public class FilesystemPersistedState implements PersistedState {
 		Typeable type,
 		Lookup direction
 	) throws OperationException {
+
+		final Repository repository;
+
 		try {
-			Utils.<Repository>parseFile(pathToStateFile);
-		} catch (IOException e) {
+			repository = Utils.parseFile(pathToStateFile);
+		} catch (Exception e) {
 			throw new OperationException(e);
 		}
 
-		return null;
+		return repository;
 	}
 
 	/**
@@ -73,26 +75,26 @@ public class FilesystemPersistedState implements PersistedState {
 		@Nullable final String name,
 		@Nullable final Typeable type
 	) throws OperationException {
-		final ApiObject a;
+		final ApiObject obj;
+		final boolean typeMatch;
+		final boolean nameMatch;
 
 		if (null == name && null == type) {
 			return null;
 		}
 
-		a = get(name, type, Lookup.SINGLE);
+		obj = get(name, type, Lookup.SINGLE);
 
-
-		if (a == null) {
+		if (!Utils.validate(obj)) {
 			return null;
 		}
 
+		typeMatch =
+			type == null ^ type.getClassRef().equals(obj.getClassRef());
+		nameMatch = name == null ^ name.trim().equals(obj.getMeta().getName());
 
-		if (type != null) {
-
-		}
-
-		a.getClass().equals(type.getClassRef());
-
-		return null;
+		return typeMatch || nameMatch
+			? (E) obj
+			: null;
 	}
 }

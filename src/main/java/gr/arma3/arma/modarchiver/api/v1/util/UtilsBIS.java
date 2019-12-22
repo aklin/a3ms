@@ -49,13 +49,6 @@ public class UtilsBIS {
 				new File(modDirectory, "meta.cpp")
 			);
 
-
-			System.out.println("----------======After=========------");
-			info.forEach((k, v) -> System.out.println(k + ": " + v));
-
-			System.out.println("Read " + info.size() + " entries");
-
-
 		} catch (IOException e) {
 			log.severe(e.getLocalizedMessage());
 			return null;
@@ -78,14 +71,9 @@ public class UtilsBIS {
 		final List<String> lines = new ArrayList<>();
 
 		for (File file : files) {
-			System.out.println("Loading " + file.getPath());
 			lines.addAll(Files.lines(file.toPath())
 				.collect(Collectors.toList()));
-			System.out.println("\tNew list size: " + lines.size());
 		}
-
-		System.out.println("Lines-------");
-		lines.forEach(System.out::println);
 
 		return lines.stream()
 			.map(cpp::matcher)

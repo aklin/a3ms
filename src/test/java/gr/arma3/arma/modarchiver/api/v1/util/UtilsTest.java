@@ -6,36 +6,34 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import javax.validation.Validation;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UtilsTest {
-	private static final Random r;
 	private static final File test;
 	private static final File empty;
 	private static final File[] allFiles;
 
 	static {
-		final long seed = 4412412124L;//System.nanoTime() + System
-		// .currentTimeMillis();
-		Logger.getLogger(UtilsTest.class.getName())
-			.log(Level.INFO, "RNG seed " + seed);
-
-		r = new Random();
 		test = new File("src/test/resources/checksumTest.txt");
 		empty = new File("src/test/resources/emptyFile.txt");
 		allFiles = new File[]{test, empty};
 
-		ByteProducer.setSource(r);
+		ByteProducer.setSource(new Random());
+	}
+
+	@BeforeAll
+	static void before() {
+		Validation.buildDefaultValidatorFactory().getValidator();
 	}
 
 

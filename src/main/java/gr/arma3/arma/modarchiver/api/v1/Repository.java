@@ -3,6 +3,7 @@ package gr.arma3.arma.modarchiver.api.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.Namespace;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Getter;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +27,9 @@ public class Repository implements ApiObject {
 	private final Class<Repository> classRef = Repository.class;
 
 	private final Meta meta;
+
+	private final List<Namespace> namespaces = defaultNsList();
+
 	/**
 	 * All modsets defined in this repository.
 	 */
@@ -40,7 +45,7 @@ public class Repository implements ApiObject {
 	/**
 	 * Repository hostname.
 	 */
-	@NotEmpty(message = "Repository address must not be empty.")
+	@NotEmpty
 	private final String address;
 
 	@JsonCreator
@@ -54,6 +59,15 @@ public class Repository implements ApiObject {
 		this.modsets = modsets != null ? modsets : Collections.emptySet();
 		this.description = description != null ? description.trim() : "";
 		this.address = address != null ? address.trim() : "";
+	}
+
+	private static List<Namespace> defaultNsList() {
+		return Collections.singletonList(
+			new NS(
+				Meta.builder()
+					.name("")
+					.description("Default namespace.")
+					.build()));
 	}
 
 }
