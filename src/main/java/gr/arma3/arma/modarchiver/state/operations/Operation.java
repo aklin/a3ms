@@ -8,10 +8,8 @@ import javax.validation.constraints.PastOrPresent;
 
 /**
  * An operation that interacts with the server state. Can be queued.
- *
- * @param <E>
  */
-public interface Operation<E extends ApiObject>
+public interface Operation
 	extends Runnable, AutoCloseable {
 
 	/**
@@ -20,7 +18,7 @@ public interface Operation<E extends ApiObject>
 	 * @return
 	 */
 	@NotNull
-	E getResource();
+	ApiObject getResource();
 
 	/**
 	 * User ID of the user who submitted this request.

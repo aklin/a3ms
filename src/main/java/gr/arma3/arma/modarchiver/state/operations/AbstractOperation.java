@@ -18,13 +18,13 @@ import java.util.Optional;
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
-abstract class AbstractOperation<E extends ApiObject> implements Operation {
+abstract class AbstractOperation implements Operation {
 
 	/**
 	 * Operation subject.
 	 */
 	@NotNull
-	private final E resource;
+	private final ApiObject resource;
 
 	/**
 	 * Operation initiator.
@@ -49,7 +49,7 @@ abstract class AbstractOperation<E extends ApiObject> implements Operation {
 	private boolean locked;
 
 	AbstractOperation(
-		@JsonProperty("resource") final E resource,
+		@JsonProperty("resource") final ApiObject resource,
 		@JsonProperty("user") final String user,
 		@JsonProperty("eventTime") final String eventTime,
 		@JsonProperty("dryRun") final boolean dryRun,
