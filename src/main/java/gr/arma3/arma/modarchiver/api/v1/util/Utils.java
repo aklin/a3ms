@@ -15,6 +15,7 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -41,7 +42,12 @@ public class Utils {
 	private static final ObjectMapper mapper;
 
 	static {
-		validator = Validation.buildDefaultValidatorFactory().getValidator();
+		validator = Validation.byDefaultProvider()
+			.configure()
+			.messageInterpolator(new ParameterMessageInterpolator())
+			.buildValidatorFactory().usingContext()
+			.messageInterpolator(new ParameterMessageInterpolator())
+			.getValidator();
 		mapper = new ObjectMapper(new YAMLFactory());
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
