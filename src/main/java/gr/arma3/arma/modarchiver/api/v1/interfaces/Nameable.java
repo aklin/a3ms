@@ -16,7 +16,5 @@ public interface Nameable {
 	 */
 	@NotNull
 	@Pattern(regexp = "[\\w\\d_-]*")
-	default String getName() {
-		return "";
-	}
+	String getName();
 }

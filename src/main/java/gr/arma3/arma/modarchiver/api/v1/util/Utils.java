@@ -17,6 +17,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
+import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -28,7 +29,6 @@ import java.nio.file.Path;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
@@ -81,15 +81,13 @@ public class Utils {
 	 * @param object API object to validate.
 	 * @return True if no errors occurred.
 	 */
-	public static boolean validate(final Object object) {
-		final Set<ConstraintViolation<Object>> errors =
-			validator.validate(object);
-
-		errors.stream()
+	public static boolean validate(final @Nullable Object object) {
+		return object != null && validator.validate(object)
+			.stream()
 			.map(ConstraintViolation::getMessage)
-			.forEach(log::severe);
-
-		return errors.isEmpty();
+			.peek(log::severe)
+			.findAny()
+			.isEmpty();
 	}
 
 	public static Instant parseLastRevision(final Mod mod) {
