@@ -9,7 +9,6 @@ import lombok.ToString;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.validation.Validation;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Objects;
@@ -33,7 +32,7 @@ class UtilsTest {
 
 	@BeforeAll
 	static void before() {
-		Validation.buildDefaultValidatorFactory().getValidator();
+		Utils.validate(new Object());
 	}
 
 

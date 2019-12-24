@@ -8,7 +8,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Singular;
 
-import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.Map;
 
@@ -17,13 +16,10 @@ import java.util.Map;
 @Builder(toBuilder = true)
 public class Meta implements MetaInfo {
 
-	@Nullable
 	private final String name;
-	@Nullable
 	private final String description;
 
-	@Nullable
-	@Singular
+	@Singular("label")
 	private final Map<String, String> labels;
 
 	@JsonCreator
@@ -32,8 +28,10 @@ public class Meta implements MetaInfo {
 		@JsonProperty("description") String description,
 		@JsonProperty("labels") Map<String, String> labels
 	) {
-		this.name = name;
-		this.description = description;
-		this.labels = labels == null ? Collections.emptyMap() : labels;
+		this.name = name == null ? "" : name.trim();
+		this.description = description == null ? "" : description.trim();
+		this.labels = labels == null
+			? Collections.emptyMap()
+			: labels;
 	}
 }
