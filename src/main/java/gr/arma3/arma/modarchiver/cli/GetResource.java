@@ -3,7 +3,6 @@ package gr.arma3.arma.modarchiver.cli;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
-import lombok.ToString;
 import picocli.CommandLine;
 
 @CommandLine.Command(
@@ -12,7 +11,6 @@ import picocli.CommandLine;
 	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
-@ToString
 public class GetResource extends ResourceOperation {
 	@CommandLine.Parameters(
 		index = "0",
@@ -32,7 +30,7 @@ public class GetResource extends ResourceOperation {
 	private String resourceIdentifier;
 
 	public GetResource() {
-		System.out.println(this);
+
 	}
 
 

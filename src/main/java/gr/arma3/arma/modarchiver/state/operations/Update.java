@@ -1,6 +1,5 @@
 package gr.arma3.arma.modarchiver.state.operations;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.java.Log;
@@ -8,7 +7,7 @@ import lombok.extern.java.Log;
 @Log
 @Getter
 @SuperBuilder(toBuilder = true)
-public class Update<E extends ApiObject> extends AbstractOperation<E> {
+public class Update extends AbstractOperation {
 
 	/**
 	 * When an object implementing interface <code>Runnable</code> is used

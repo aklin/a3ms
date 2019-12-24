@@ -25,6 +25,8 @@ public class Repository implements ApiObject {
 	private final Class<Repository> classRef = Repository.class;
 
 	private final Meta meta;
+
+
 	/**
 	 * All modsets defined in this repository.
 	 */
@@ -40,7 +42,7 @@ public class Repository implements ApiObject {
 	/**
 	 * Repository hostname.
 	 */
-	@NotEmpty(message = "Repository address must not be empty.")
+	@NotEmpty
 	private final String address;
 
 	@JsonCreator

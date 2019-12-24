@@ -38,7 +38,6 @@ public class CreateResource extends ResourceOperation {
 	 */
 	@Override
 	protected ApiObject processInput() throws Exception {
-		System.out.println(this);
 		final ApiObject obj = Utils.parseFile(modFolder.toPath());
 
 		this.setExitCondition(

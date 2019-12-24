@@ -46,6 +46,11 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>biz.paluch.redis</groupId>
+			<artifactId>lettuce</artifactId>
+			<version>3.2.Final</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -201,5 +206,16 @@
 		</plugins>
 
 	</build>
-
+	<repositories>
+		<repository>
+			<id>my-repo1</id>
+			<name>your custom repo</name>
+			<url>http://jarsm2.dyndns.dk</url>
+		</repository>
+		<repository>
+			<id>my-repo2</id>
+			<name>your custom repo</name>
+			<url>http://jarsm2.dyndns.dk</url>
+		</repository>
+	</repositories>
 </project>
