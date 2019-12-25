@@ -57,7 +57,7 @@ public class App {
 	@CommandLine.Parameters(
 		index = "1",
 		defaultValue = "",
-		paramLabel = "$.META.NAME",
+		paramLabel = "NAME",
 		description = "Resource name. If left empty all resources of " +
 			"specified type will be returned."
 	)

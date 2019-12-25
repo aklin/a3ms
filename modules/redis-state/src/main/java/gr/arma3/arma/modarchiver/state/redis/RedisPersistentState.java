@@ -18,17 +18,18 @@ import java.util.Arrays;
 
 public class RedisPersistentState
 	implements PersistedState<RedisPersistentState>, AutoCloseable {
-	public static final RedisPersistentState Singleton;
-	private static final RedisClient client;
-	private static final RedisConnectionPool<RedisConnection<String,
-		ApiObject>> pool;
+	private final RedisClient client;
+	private final RedisConnectionPool<RedisConnection<String, ApiObject>> pool;
 
-	static {
-		client = new RedisClient(RedisURI.create("redis://localhost"));
-		pool = client.pool(new ApiObjectRedisCodec(), 2, 5);
-		pool.allocateConnection().ping();
-		Singleton = new RedisPersistentState();
+	public RedisPersistentState() {
+		this(RedisURI.create("redis://localhost"));
 	}
+
+	public RedisPersistentState(final RedisURI uri) {
+		this.client = new RedisClient(uri);
+		this.pool = this.client.pool(new ApiObjectRedisCodec(), 2, 5);
+	}
+
 
 	@Override
 	public RedisPersistentState create(ApiObject resource) {

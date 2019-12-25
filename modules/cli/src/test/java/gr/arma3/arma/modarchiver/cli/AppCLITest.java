@@ -2,7 +2,7 @@ package gr.arma3.arma.modarchiver.cli;
 
 import org.junit.jupiter.api.Test;
 
-class AppCLITest {
+public class AppCLITest {
 
 	@Test
 	void helpTest() {
