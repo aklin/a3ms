@@ -5,35 +5,62 @@ import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.Mod;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.nio.charset.StandardCharsets;
 
 class ApiObjectRedisCodecTest {
+	private static RedisCodec<String, ApiObject> codec;
 
-	@Test
-	public void decodeKey(ByteBuffer buffer) {
+	@BeforeAll
+	static void init() {
+		codec = new ApiObjectRedisCodec();
 	}
 
 	@Test
-	public void decodeValue(ByteBuffer buffer) {
+	public void decodeKey() {
+		final String keystr = "testKey";
+		final byte[] key = keystr.getBytes(StandardCharsets.UTF_8);
+
+		Assertions.assertEquals(keystr,
+			codec.decodeKey(ByteBuffer.wrap(key)));
 	}
 
 	@Test
-	public void encodeKey(String s) {
-	}
-
-	@Test
-	public void encodeValue() {
-		final RedisCodec<String, ApiObject> codec = new ApiObjectRedisCodec();
+	public void decodeValue() {
 		final ApiObject obj = Mod.builder()
 			.meta(Meta.builder().name("junit").build())
 			.build();
 
-		final ApiObject result = Utils.deserialize(
-			Arrays.toString(codec.encodeValue(obj)));
+
+		final ApiObject result =
+			codec.decodeValue(ByteBuffer.wrap(Utils.serialize(
+				obj).getBytes(StandardCharsets.UTF_8)));
+
+		Assertions.assertEquals(obj, result);
+	}
+
+	@Test
+	public void encodeKey() {
+		final String keystr = "testKey";
+		final byte[] key = keystr.getBytes(StandardCharsets.UTF_8);
+
+		Assertions.assertArrayEquals(key, codec.encodeKey(keystr));
+	}
+
+	@Test
+	public void encodeValue() {
+
+		final ApiObject obj = Mod.builder()
+			.meta(Meta.builder().name("junit").build())
+			.build();
 
 
+		Assertions.assertArrayEquals(Utils.serialize(obj)
+				.getBytes(StandardCharsets.UTF_8),
+			codec.encodeValue(obj));
 	}
 }
