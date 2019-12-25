@@ -1,4 +1,4 @@
-package gr.arma3.arma.modarchiver.state;
+package gr.arma3.arma.modarchiver.state.redis;
 
 import com.lambdaworks.redis.RedisClient;
 import com.lambdaworks.redis.RedisConnection;
@@ -8,7 +8,8 @@ import com.lambdaworks.redis.codec.RedisCodec;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
-import gr.arma3.arma.modarchiver.state.operations.OperationException;
+import state.PersistedState;
+import state.operations.OperationException;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
@@ -27,11 +28,6 @@ public class RedisPersistentState
 		pool = client.pool(new ApiObjectRedisCodec(), 2, 5);
 		pool.allocateConnection().ping();
 		Singleton = new RedisPersistentState();
-	}
-
-
-	private RedisPersistentState() {
-
 	}
 
 	@Override

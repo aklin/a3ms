@@ -2,8 +2,8 @@ package gr.arma3.arma.modarchiver.cli;
 
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
+import lombok.Getter;
 import picocli.CommandLine;
-import state.PersistedState;
 
 @CommandLine.Command(
 	description = "Create a new resource based on input.",
@@ -11,11 +11,11 @@ import state.PersistedState;
 	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
+@Getter
 public class CreateResource extends ResourceOperation {
 
-	public CreateResource(PersistedState state) {
-		super(state);
-	}
+	@CommandLine.ParentCommand
+	private App app;
 
 	/**
 	 * Implement this method with persistence logic.

@@ -1,19 +1,19 @@
 package gr.arma3.arma.modarchiver.cli;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import lombok.Getter;
 import picocli.CommandLine;
 
+
 @CommandLine.Command(
-	description = "Get existing resource",
-	name = "get",
+	description = "Delete a resource by name.",
+	name = "delete",
 	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
 @Getter
-public class GetResource extends ResourceOperation {
+public class DeleteResource extends ResourceOperation {
+
 	@CommandLine.ParentCommand
 	private App app;
 
@@ -24,12 +24,7 @@ public class GetResource extends ResourceOperation {
 	 */
 	@Override
 	protected ExitCondition persistResult() {
-		return ExitCode.App.OK;
-	}
-
-	@Override
-	protected ApiObject processInput() throws Exception {
-		System.out.println(this);
 		return null;
 	}
+
 }

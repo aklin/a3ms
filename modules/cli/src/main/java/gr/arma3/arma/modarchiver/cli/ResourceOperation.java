@@ -7,44 +7,15 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.Getter;
 import picocli.CommandLine;
-import state.PersistedState;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
 @Getter
 abstract class ResourceOperation
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
-
 	private ExitCondition exitCondition = null;
 
-	@CommandLine.Option(
-		defaultValue = "false",
-		names = {"--noValidation"},
-		description = "Turns off input validation. Only use if you know what" +
-			" you're doing."
-	)
-	private boolean validateInput;
-	@CommandLine.Option(
-		defaultValue = "false",
-		names = {"--dryRun"},
-		description = "Do not change server state, but pretend to do so. " +
-			"Ignores --noValidation."
-	)
-	private boolean dryRun = false;
-
-	protected final PersistedState state;
-	@CommandLine.Option(
-		defaultValue = ".",
-		names = {"-f", "--file"},
-		description = "Path to the mod folder(s)."
-	)
-	protected File modFolder;
-
-	public ResourceOperation(final PersistedState state) {
-		this.state = state;
-	}
 
 	public final OperationResult call() {
 		ApiObject input = null;
@@ -56,7 +27,7 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PARSE_ERROR;
 		}
 
-		if (!this.dryRun) try {
+		if (!getApp().isDryRun()) try {
 			exitCondition = persistResult();
 		} catch (Exception e) {
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
@@ -72,8 +43,11 @@ abstract class ResourceOperation
 	 */
 	protected abstract ExitCondition persistResult();
 
+	protected abstract App getApp();
+
 	protected ApiObject processInput() throws Exception {
-		final ApiObject obj = Utils.parseFile(modFolder.toPath());
+		final ApiObject obj =
+			Utils.parseFile(getApp().getModFolder().toPath());
 
 		this.setExitCondition(
 			Utils.validate(obj)
@@ -87,6 +61,7 @@ abstract class ResourceOperation
 	public final ExitCondition getExitCondition() {
 		return exitCondition;
 	}
+
 
 	protected final void setExitCondition(final ExitCondition exitCondition) {
 
