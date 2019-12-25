@@ -14,31 +14,32 @@ import java.nio.file.Path;
  * @version 1.0
  */
 @Builder
-public class FilesystemPersistedState implements PersistedState {
+public class FilesystemPersistedState
+	implements PersistedState<FilesystemPersistedState> {
 
 	private final Path pathToStateFile;
 
 
 	@Override
-	public <E extends ApiObject> FilesystemPersistedState create(E resource) {
+	public FilesystemPersistedState create(ApiObject resource) {
 		Utils.validate(resource);
 
 		return null;
 	}
 
 	@Override
-	public <E extends ApiObject> FilesystemPersistedState update(E resource) {
+	public FilesystemPersistedState update(ApiObject resource) {
 		Utils.validate(resource);
 		return null;
 	}
 
 	@Override
-	public <E extends ApiObject> FilesystemPersistedState delete(E resource) {
+	public FilesystemPersistedState delete(ApiObject resource) {
 		Utils.validate(resource);
 		return null;
 	}
 
-	public <E extends ApiObject> E get(
+	public ApiObject get(
 		String name,
 		Lookup direction
 	) {
@@ -71,7 +72,7 @@ public class FilesystemPersistedState implements PersistedState {
 	 * @return Object identified by name and/or type, or null.
 	 */
 	@Override
-	public <E extends ApiObject> E get(
+	public ApiObject get(
 		@Nullable final String name,
 		@Nullable final Typeable type
 	) throws OperationException {
@@ -94,7 +95,7 @@ public class FilesystemPersistedState implements PersistedState {
 		nameMatch = name == null ^ name.trim().equals(obj.getMeta().getName());
 
 		return typeMatch || nameMatch
-			? (E) obj
+			? obj
 			: null;
 	}
 }

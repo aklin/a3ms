@@ -4,9 +4,12 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
+import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.Getter;
 import picocli.CommandLine;
 
+import java.io.File;
+import java.util.Collections;
 import java.util.concurrent.Callable;
 
 @Getter
@@ -30,8 +33,18 @@ abstract class ResourceOperation
 	)
 	private boolean dryRun = false;
 
+	@CommandLine.Option(
+		defaultValue = ".",
+		names = {"-f", "--file"},
+		description = "Path to the mod folder(s)."
+	)
+	private File modFolder;
 
-	public final OperationResult call() throws Exception {
+	public ResourceOperation() {
+
+	}
+
+	public final OperationResult call() {
 		ApiObject input = null;
 
 
@@ -47,7 +60,7 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
 		}
 
-		return new OpResult(exitCondition);
+		return new OpResult(exitCondition, Collections.singletonList(input));
 	}
 
 	/**
@@ -57,7 +70,17 @@ abstract class ResourceOperation
 	 */
 	protected abstract ExitCondition persistResult();
 
-	protected abstract ApiObject processInput() throws Exception;
+	protected ApiObject processInput() throws Exception {
+		final ApiObject obj = Utils.parseFile(modFolder.toPath());
+
+		this.setExitCondition(
+			Utils.validate(obj)
+				? ExitCode.App.OK
+				: ExitCode.ResourceOperation.NOT_FOUND
+		);
+		return obj;
+
+	}
 
 	public final ExitCondition getExitCondition() {
 		return exitCondition;

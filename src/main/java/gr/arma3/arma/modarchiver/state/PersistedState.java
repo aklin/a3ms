@@ -9,35 +9,34 @@ import javax.validation.constraints.NotNull;
 
 /**
  * State object. Used to retrieve resource hierarchies.
+ *
+ * @param <This> Subclass implementers should use their own names.
  */
-public interface PersistedState {
+public interface PersistedState<This extends PersistedState> {
 
 	int LOOK_UP = 5521; //magic numbers
 	int LOOK_DOWN = 5256;
 
-	<E extends ApiObject> FilesystemPersistedState create(final E resource);
+	@NotNull This create(final ApiObject resource);
 
 	/**
 	 * @param resource
-	 * @param <E>      Resource type.
 	 * @return State after the operation.
 	 */
-	@NotNull <E extends ApiObject> PersistedState update(final E resource);
+	@NotNull This update(final ApiObject resource);
 
 	/**
 	 * @param resource
-	 * @param <E>      Resource type.
 	 * @return State after the operation.
 	 */
-	@NotNull <E extends ApiObject> PersistedState delete(final E resource);
+	@NotNull This delete(final ApiObject resource);
 
 	/**
 	 * @param name      Resource name.
-	 * @param direction
-	 * @param <E>
-	 * @return
+	 * @param direction Lookup direction.
+	 * @return This.
 	 */
-	@NotNull <E extends ApiObject> E get(
+	@NotNull ApiObject get(
 		final String name,
 		final Lookup direction
 	) throws OperationException;
@@ -55,10 +54,9 @@ public interface PersistedState {
 	 *
 	 * @param name Name.
 	 * @param type Type.
-	 * @param <E>  Result type.
 	 * @return Object identified by name and/or type, or null.
 	 */
-	<E extends ApiObject> E get(
+	ApiObject get(
 		@Nullable final String name,
 		@Nullable final Typeable type
 	) throws OperationException;

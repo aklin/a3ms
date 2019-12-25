@@ -6,7 +6,6 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -15,9 +14,4 @@ class OpResult implements OperationResult {
 
 	private final ExitCondition exitCondition;
 	private final List<ApiObject> resources;
-
-	public OpResult(final ExitCondition exitCondition) {
-		this(exitCondition, Collections.emptyList());
-	}
-
 }

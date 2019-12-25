@@ -23,7 +23,6 @@ public class Create extends AbstractOperation {
 	 */
 	@Override
 	public void run() {
-
 		StateUtils.create(getResource());
 
 	}

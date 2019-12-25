@@ -50,6 +50,7 @@ class UtilsTest {
 
 		assertTrue(Utils.validate(Meta.builder().build()));
 		assertTrue(Utils.validate(Repository.builder()
+			.meta(Meta.builder().name("Unit Test Repo").build())
 			.address("localhost")
 			.build()));
 	}

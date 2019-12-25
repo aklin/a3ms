@@ -30,6 +30,7 @@ import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
@@ -40,6 +41,13 @@ public class Utils {
 	static final int DEFAULT_CHUNK_SIZE_KIB = 128;
 	private static final Validator validator;
 	private static final ObjectMapper mapper;
+
+	public static final Pattern NAME_RGX;
+	public static final Pattern DESC_RGX;
+	/**
+	 * (type:name)
+	 */
+	public static final Pattern FQN_RGX;
 
 	static {
 		validator = Validation.byDefaultProvider()
@@ -62,6 +70,12 @@ public class Utils {
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
+
+		NAME_RGX = Pattern.compile("[\\w\\d_-]*");
+		DESC_RGX = Pattern.compile("[\\w\\d\\s]*");
+		FQN_RGX = Pattern.compile("("
+			+ NAME_RGX.pattern() + "):("
+			+ NAME_RGX.pattern() + ")");
 	}
 
 	static int getSizeKiB(final Path path) {
@@ -97,6 +111,10 @@ public class Utils {
 			Errors.fromThrowable(e);
 			return Instant.EPOCH;
 		}
+	}
+
+	public static String getFQN(final ApiObject obj) {
+		return obj.getType() + ":" + obj.getMeta().getName();
 	}
 
 	/**
