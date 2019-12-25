@@ -5,6 +5,7 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import gr.arma3.arma.modarchiver.state.PersistedState;
 import lombok.Getter;
 import picocli.CommandLine;
 
@@ -33,15 +34,16 @@ abstract class ResourceOperation
 	)
 	private boolean dryRun = false;
 
+	protected final PersistedState state;
 	@CommandLine.Option(
 		defaultValue = ".",
 		names = {"-f", "--file"},
 		description = "Path to the mod folder(s)."
 	)
-	private File modFolder;
+	protected File modFolder;
 
-	public ResourceOperation() {
-
+	public ResourceOperation(final PersistedState state) {
+		this.state = state;
 	}
 
 	public final OperationResult call() {
