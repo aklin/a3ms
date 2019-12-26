@@ -10,7 +10,6 @@
     <file url="file://$PROJECT_DIR$/modules/cli/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/modules/redis-state/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/modules/redis-state/src/main/resources" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources/application.properties" charset="UTF-8" />
   </component>

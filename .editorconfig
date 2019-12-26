@@ -10,6 +10,9 @@ trim_trailing_whitespace = true
 max_line_length          = 80
 tab_width                = 4
 
+[*.{yaml, yml, md, markdown}]
+indent_size = 2
+
 [*{.java, .xml}]
 indent_style = tab
 
