@@ -12,10 +12,16 @@
           <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.0.4/picocli-4.0.4.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
         </processorPath>
+        <module name="api.v1" />
+        <module name="api.state.v1" />
+        <module name="cli" />
+        <module name="redis-state" />
         <module name="arma3-mod-archiver" />
-        <module name="Arma 3 Modset Archiver" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="state.api.v1" target="11" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

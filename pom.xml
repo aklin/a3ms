@@ -7,8 +7,14 @@
 	<groupId>gr.arma3.arma</groupId>
 	<artifactId>modarchiver</artifactId>
 	<version>1.0-SNAPSHOT</version>
+	<modules>
+		<module>modules/redis-state</module>
+		<module>modules/api.v1</module>
+		<module>modules/cli</module>
+		<module>modules/api.state.v1</module>
+	</modules>
 
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,6 +25,12 @@
 		<org.apache.maven.plugins.version>3.0.0-M3
 		</org.apache.maven.plugins.version>
 		<maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
+		<!-- Modules -->
+		<project.modules.version.api>1.0-SNAPSHOT</project.modules.version.api>
+		<project.modules.version.api-state>1.0-SNAPSHOT
+		</project.modules.version.api-state>
+		<project.modules.version.state>1.0-SNAPSHOT
+		</project.modules.version.state>
 	</properties>
 
 	<dependencies>
@@ -68,20 +80,13 @@
 			<artifactId>validation-api</artifactId>
 			<version>2.0.1.Final</version>
 		</dependency>
-<!--
 		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.el</artifactId>
-			<version>3.0.1-b11</version>
-		</dependency>
--->
-		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.0.17.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator-annotation-processor</artifactId>
 			<version>6.0.17.Final</version>
 		</dependency>
@@ -128,21 +133,6 @@
 		</testResources>
 
 		<plugins>
-			<!--
-						<plugin>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok-maven-plugin</artifactId>
-							<version>1.18.10.0</version>
-							<executions>
-								<execution>
-									<phase>generate-sources</phase>
-									<goals>
-										<goal>delombok</goal>
-									</goals>
-								</execution>
-							</executions>
-						</plugin>
-			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
