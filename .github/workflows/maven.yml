@@ -21,4 +21,4 @@ jobs:
             # Artifact name
             name: snapshot.jar
             # Directory containing files to upload
-            path: target/modarchiver-1.0-SNAPSHOT.jar
+            path: modules/cli/target/cli-1.0-SNAPSHOT.jar
