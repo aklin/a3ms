@@ -17,7 +17,12 @@ public class AppCLITest {
 
 	@Test
 	void getTest() {
-		Main.callWithArg("get mod test");
+		Main.callWithArg("a3ms get ");
+	}
+
+	@Test
+	void createTest() {
+		Main.callWithArg("create ");
 	}
 
 }

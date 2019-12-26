@@ -2,6 +2,7 @@ package gr.arma3.arma.modarchiver.cli;
 
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import picocli.CommandLine;
 
@@ -12,6 +13,7 @@ import picocli.CommandLine;
 	version = "1.0"
 )
 @Getter
+@AllArgsConstructor
 public class CreateResource extends ResourceOperation {
 
 	@CommandLine.ParentCommand
