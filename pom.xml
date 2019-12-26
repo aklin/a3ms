@@ -25,6 +25,12 @@
 		<org.apache.maven.plugins.version>3.0.0-M3
 		</org.apache.maven.plugins.version>
 		<maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
+		<!-- Modules -->
+		<project.modules.version.api>1.0-SNAPSHOT</project.modules.version.api>
+		<project.modules.version.api-state>1.0-SNAPSHOT
+		</project.modules.version.api-state>
+		<project.modules.version.state>1.0-SNAPSHOT
+		</project.modules.version.state>
 	</properties>
 
 	<dependencies>
@@ -75,12 +81,12 @@
 			<version>2.0.1.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>6.0.17.Final</version>
 		</dependency>
 		<dependency>
-			<groupId>org.hibernate</groupId>
+			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator-annotation-processor</artifactId>
 			<version>6.0.17.Final</version>
 		</dependency>

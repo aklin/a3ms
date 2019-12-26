@@ -15,20 +15,38 @@
 		<dependency>
 			<groupId>gr.arma3.arma</groupId>
 			<artifactId>api.v1</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${project.modules.version.api}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>gr.arma3.arma</groupId>
 			<artifactId>api.state.v1</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${project.modules.version.api-state}</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>gr.arma3.arma.state</groupId>
 			<artifactId>redis</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>${project.modules.version.state}</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.1.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
