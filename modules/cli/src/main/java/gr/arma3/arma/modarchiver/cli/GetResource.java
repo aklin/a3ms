@@ -18,9 +18,9 @@ import picocli.CommandLine;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetResource extends ResourceOperation {
-	@CommandLine.ParentCommand
-	private App app;
 
+	@CommandLine.ParentCommand
+	private ResourceOpCommand CLI;
 	/**
 	 * Implement this method with persistence logic.
 	 *

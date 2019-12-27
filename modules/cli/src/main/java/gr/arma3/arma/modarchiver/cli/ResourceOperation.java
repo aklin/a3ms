@@ -16,6 +16,11 @@ abstract class ResourceOperation
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
 	private ExitCondition exitCondition = null;
 
+	public ResourceOperation() {
+
+	}
+
+	protected abstract ResourceOpCommand getCLI();
 
 	public final OperationResult call() {
 		ApiObject input = null;
@@ -27,7 +32,7 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PARSE_ERROR;
 		}
 
-		if (!getApp().isDryRun()) try {
+		if (!getCLI().isDryRun()) try {
 			exitCondition = persistResult();
 		} catch (Exception e) {
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
@@ -43,11 +48,10 @@ abstract class ResourceOperation
 	 */
 	protected abstract ExitCondition persistResult();
 
-	protected abstract App getApp();
 
 	protected ApiObject processInput() throws Exception {
 		final ApiObject obj =
-			Utils.parseFile(getApp().getModFolder().toPath());
+			Utils.parseFile(getCLI().getModFolder().toPath());
 
 		this.setExitCondition(
 			Utils.validate(obj)

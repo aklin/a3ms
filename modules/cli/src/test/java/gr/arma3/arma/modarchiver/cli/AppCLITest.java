@@ -2,27 +2,29 @@ package gr.arma3.arma.modarchiver.cli;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class AppCLITest {
 
 	@Test
 	void helpTest() {
-		Main.callWithArg("help");
+		assertEquals(0, Main.callWithArgs("help"));
 	}
 
 
 	@Test
 	void versionTest() {
-		Main.callWithArg("-V");
+		assertEquals(0, Main.callWithArgs("-V"));
 	}
 
 	@Test
 	void getTest() {
-		Main.callWithArg("a3ms get ");
+		Main.callWithArgs("a3ms", "get");
 	}
 
 	@Test
 	void createTest() {
-		Main.callWithArg("create ");
+		assertEquals(0, Main.callWithArgs("create", "mod", "foo"));
 	}
 
 }

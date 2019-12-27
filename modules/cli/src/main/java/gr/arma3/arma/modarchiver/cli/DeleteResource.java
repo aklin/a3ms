@@ -15,8 +15,7 @@ import picocli.CommandLine;
 public class DeleteResource extends ResourceOperation {
 
 	@CommandLine.ParentCommand
-	private App app;
-
+	private ResourceOpCommand CLI;
 	/**
 	 * Implement this method with persistence logic.
 	 *

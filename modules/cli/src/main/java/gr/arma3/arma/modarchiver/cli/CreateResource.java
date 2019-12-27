@@ -17,7 +17,11 @@ import picocli.CommandLine;
 public class CreateResource extends ResourceOperation {
 
 	@CommandLine.ParentCommand
-	private App app;
+	private ResourceOpCommand CLI;
+
+	public CreateResource() {
+
+	}
 
 	/**
 	 * Implement this method with persistence logic.
