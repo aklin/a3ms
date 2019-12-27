@@ -2,19 +2,17 @@ package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import picocli.CommandLine;
 
 import java.io.File;
 
 @CommandLine.Command(
-	description = "Create a resource.",
-	name = "create",
+	description = "Update existing resource.",
+	name = "update",
 	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
 @Getter
-@NoArgsConstructor
 public class UpdateActionCLI extends AbstractCLIAction {
 
 	@CommandLine.Option(
@@ -25,9 +23,7 @@ public class UpdateActionCLI extends AbstractCLIAction {
 
 	@CommandLine.Option(
 		defaultValue = "false",
-		names = {
-			"--dryRun"
-		},
+		names = {"--dryRun"},
 		description = "Do not change server state, but pretend to do so."
 	)
 	private boolean dryRun;
