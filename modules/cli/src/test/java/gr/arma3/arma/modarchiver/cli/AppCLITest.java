@@ -19,7 +19,7 @@ public class AppCLITest {
 
 	@Test
 	void getTest() {
-		Main.callWithArgs("a3ms", "get");
+		Main.callWithArgs("get");
 	}
 
 	@Test
@@ -27,4 +27,8 @@ public class AppCLITest {
 		assertEquals(0, Main.callWithArgs("create", "mod", "foo"));
 	}
 
+	@Test
+	void testNoArgs() {
+		assertEquals(0, Main.callWithArgs(""));
+	}
 }

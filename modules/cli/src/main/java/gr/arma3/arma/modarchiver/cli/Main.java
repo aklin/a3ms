@@ -17,7 +17,9 @@ public class Main {
 	}
 
 	public static int callWithArgs(String... args) {
-		Main.args = args;
+		Main.args = args == null || args.length == 0
+			? new String[]{"-h"}
+			: args;
 		return new Main().call();
 	}
 
@@ -28,6 +30,6 @@ public class Main {
 	 * @throws Exception if unable to compute a result
 	 */
 	public int call() {
-		return new CommandLine(ResourceOpCommand.class).execute(args);
+		return new CommandLine(App.class).execute(args);
 	}
 }

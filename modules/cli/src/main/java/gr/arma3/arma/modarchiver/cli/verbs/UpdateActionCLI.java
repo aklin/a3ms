@@ -1,26 +1,23 @@
-package gr.arma3.arma.modarchiver.cli;
+package gr.arma3.arma.modarchiver.cli.verbs;
 
-
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import picocli.CommandLine;
 
 import java.io.File;
 
 @CommandLine.Command(
-	name = "a3ms",
-	description = "Arma 3 Mod Manager",
+	description = "Create a resource.",
+	name = "create",
 	mixinStandardHelpOptions = true,
-	version = "1.0",
-	subcommands = {
-		CommandLine.HelpCommand.class,
-		DeleteResource.class,
-		CreateResource.class,
-	}
+	version = "1.0"
 )
 @Getter
-public class ResourceOpCommand implements Runnable {
+@NoArgsConstructor
+public class UpdateActionCLI extends AbstractCLIAction {
+
 	@CommandLine.Option(
-		defaultValue = ".",
 		names = {"-f", "--file"},
 		description = "Folder or files to process."
 	)
@@ -28,14 +25,15 @@ public class ResourceOpCommand implements Runnable {
 
 	@CommandLine.Option(
 		defaultValue = "false",
-		names = {"--dryRun"},
+		names = {
+			"--dryRun"
+		},
 		description = "Do not change server state, but pretend to do so."
 	)
-	private boolean dryRun = false;
+	private boolean dryRun;
 
 	@CommandLine.Parameters(
 		index = "0",
-		defaultValue = "",
 		paramLabel = "TYPE",
 		description = "Resource type. Required."
 	)
@@ -43,14 +41,18 @@ public class ResourceOpCommand implements Runnable {
 
 	@CommandLine.Parameters(
 		index = "1",
-		defaultValue = "",
 		paramLabel = "NAME",
 		description = "Resource name."
 	)
 	private String resourceIdentifier;
 
+	/**
+	 * Implement this method with persistence logic.
+	 *
+	 * @return Exit condition
+	 */
 	@Override
-	public void run() {
-
+	protected ExitCondition persistResult() {
+		return null;
 	}
 }

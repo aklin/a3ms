@@ -1,8 +1,8 @@
-package gr.arma3.arma.modarchiver.cli;
+package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
-import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,28 +1,33 @@
-package gr.arma3.arma.modarchiver.cli;
+package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
-import gr.arma3.arma.modarchiver.api.v1.util.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.Getter;
 import picocli.CommandLine;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.concurrent.Callable;
 
 @Getter
-abstract class ResourceOperation
+abstract class AbstractCLIAction
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
 	private ExitCondition exitCondition = null;
 
-	public ResourceOperation() {
+	public abstract boolean isDryRun();
 
-	}
+	public abstract String getResourceType();
 
-	protected abstract ResourceOpCommand getCLI();
+	public abstract String getResourceIdentifier();
+
+	public abstract File getModFolder();
 
 	public final OperationResult call() {
+		System.out.println("Executing!");
+		System.out.println(this.toString());
 		ApiObject input = null;
 
 
@@ -32,11 +37,13 @@ abstract class ResourceOperation
 			exitCondition = ExitCode.ResourceOperation.PARSE_ERROR;
 		}
 
-		if (!getCLI().isDryRun()) try {
+
+		if (!isDryRun()) try {
 			exitCondition = persistResult();
 		} catch (Exception e) {
 			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
 		}
+
 
 		return new OpResult(exitCondition, Collections.singletonList(input));
 	}
@@ -51,7 +58,7 @@ abstract class ResourceOperation
 
 	protected ApiObject processInput() throws Exception {
 		final ApiObject obj =
-			Utils.parseFile(getCLI().getModFolder().toPath());
+			Utils.parseFile(getModFolder().toPath());
 
 		this.setExitCondition(
 			Utils.validate(obj)
