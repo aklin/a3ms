@@ -111,7 +111,6 @@ public class RedisPersistentState implements PersistedState {
 				.filter(s -> !"OK".equalsIgnoreCase(s))
 				.count();
 
-
 			return new OpResult(
 				failCount == 0
 					? ExitCode.App.OK
@@ -144,10 +143,11 @@ public class RedisPersistentState implements PersistedState {
 		try (final RedisConnection<String, ApiObject> conn =
 				 pool.allocateConnection()) {
 			final List<ApiObject> result;
+			final String typeStr = type == null ? "*" : type.getType();
 
 			conn.multi();
 
-			conn.scan(ScanArgs.Builder.matches(Utils.NAME_RGX + ":" + name))
+			conn.scan(ScanArgs.Builder.matches(typeStr + ":" + name))
 				.getKeys()
 				.stream()
 				.peek(conn::watch)
