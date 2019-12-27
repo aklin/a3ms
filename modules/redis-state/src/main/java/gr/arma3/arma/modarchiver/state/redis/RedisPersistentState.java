@@ -1,23 +1,22 @@
 package gr.arma3.arma.modarchiver.state.redis;
 
-import com.lambdaworks.redis.RedisClient;
-import com.lambdaworks.redis.RedisConnection;
-import com.lambdaworks.redis.RedisConnectionPool;
-import com.lambdaworks.redis.RedisURI;
-import com.lambdaworks.redis.codec.RedisCodec;
+import com.lambdaworks.redis.*;
+import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
+import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import state.PersistedState;
+import state.StateUtils;
 import state.operations.OperationException;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
-public class RedisPersistentState
-	implements PersistedState<RedisPersistentState>, AutoCloseable {
+public class RedisPersistentState implements PersistedState {
 	private final RedisClient client;
 	private final RedisConnectionPool<RedisConnection<String, ApiObject>> pool;
 
@@ -32,71 +31,106 @@ public class RedisPersistentState
 
 
 	@Override
-	public RedisPersistentState create(ApiObject resource) {
+	public OperationResult create(ApiObject resource) {
 		final String type = resource.getType();
 		final String name = resource.getMeta().getName();
 
 		try (final RedisConnection<String, ApiObject> conn =
 				 pool.allocateConnection()) {
 
-			"OK".equalsIgnoreCase(conn.set(Utils.getFQN(resource), resource));
+			"OK".equalsIgnoreCase(conn.set(StateUtils.getFQN(resource),
+				resource));
 		}
 
-		return this;
-	}
-
-	/**
-	 * @param resource
-	 * @return State after the operation.
-	 */
-	@Override
-	public @NotNull RedisPersistentState update(ApiObject resource) {
 		return null;
 	}
 
 	/**
-	 * @param resource
-	 * @return State after the operation.
+	 * @param resource Subject.
+	 * @return Operation result.
 	 */
 	@Override
-	public @NotNull RedisPersistentState delete(ApiObject resource) {
+	public @NotNull OperationResult update(ApiObject resource) {
 		return null;
 	}
 
 	/**
-	 * @param name      Resource name.
-	 * @param direction
-	 * @return
+	 * @param resource Subject.
+	 * @return Operation result.
 	 */
 	@Override
-	public @NotNull ApiObject get(
-		String name,
-		Lookup direction
-	) throws OperationException {
-		return null;
+	public @NotNull OperationResult delete(ApiObject resource) {
+		final String fqn = StateUtils.getFQN(resource);
+		final long failCount;
+
+		try (final RedisConnection<String, ApiObject> conn =
+				 pool.allocateConnection()) {
+
+			conn.multi();
+			conn.watch(fqn);
+
+			if (!conn.exists(fqn)) {
+				conn.discard();
+				return new OpResult(ExitCode.ResourceOperation.NOT_FOUND);
+			}
+			conn.del(fqn);
+			failCount = conn.exec().stream()
+				.map(Object::toString)
+				.filter(s -> !"OK".equalsIgnoreCase(s))
+				.count();
+
+
+			return new OpResult(
+				failCount == 0
+					? ExitCode.App.OK
+					: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+				Collections.singletonList(resource)
+			);
+		}
 	}
 
 	/**
-	 * Get entity.
+	 * @param name Resource name. If null, all resources matching the given
+	 *             type will be returned.
+	 * @return This.
+	 */
+	@Override
+	public @NotNull OperationResult get(String name) throws OperationException {
+
+		try (final RedisConnection<String, ApiObject> conn =
+				 pool.allocateConnection()) {
+			final List<ApiObject> result;
+
+			conn.multi();
+
+			conn.scan(ScanArgs.Builder.matches(Utils.NAME_RGX + ":" + name))
+				.getKeys()
+				.stream()
+				.peek(conn::watch)
+				.forEach(conn::get);
+
+			result = conn.exec().stream()
+				.map(Object::toString)
+				.map(Utils::deserialize)
+				.collect(Collectors.toList());
+
+
+			return new OpResult(ExitCode.App.OK, result);
+		}
+
+	}
+
+	/**
+	 * Get resource by name and type.
 	 *
-	 * @param name Name.
-	 * @param type Type.
-	 * @return Object identified by name and/or type, or null.
+	 * @param name Resource name. If null, all resources matching the given
+	 *             type will be returned.
+	 * @param type Resource type. Can be null.
+	 * @return Operation result.
 	 */
 	@Override
-	public ApiObject get(
-		@Nullable String name,
-		@Nullable Typeable type
-	) throws OperationException {
-		return null;
-	}
-
-	@Override
-	public @NotNull ApiObject get(
-		String name,
-		Typeable type,
-		Lookup direction
-	) throws OperationException {
+	public @NotNull OperationResult get(String name, Typeable type) throws
+		OperationException {
 		return null;
 	}
 
@@ -104,29 +138,5 @@ public class RedisPersistentState
 	public void close() {
 		pool.close();
 		client.shutdown();
-	}
-
-	private static class ApiObjectRedisCodec
-		extends RedisCodec<String, ApiObject> {
-
-		@Override
-		public String decodeKey(ByteBuffer buffer) {
-			return Arrays.toString(buffer.array());
-		}
-
-		@Override
-		public ApiObject decodeValue(ByteBuffer buffer) {
-			return Utils.deserialize(Arrays.toString(buffer.array()));
-		}
-
-		@Override
-		public byte[] encodeKey(String s) {
-			return s.getBytes();
-		}
-
-		@Override
-		public byte[] encodeValue(ApiObject apiObject) {
-			return Utils.serialize(apiObject).getBytes();
-		}
 	}
 }

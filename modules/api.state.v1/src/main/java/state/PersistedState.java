@@ -1,80 +1,56 @@
 package state;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import state.operations.OperationException;
 
-import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 /**
  * State object. Used to retrieve resource hierarchies.
- *
- * @param <This> Subclass implementers should use their own names.
  */
-public interface PersistedState<This extends PersistedState> {
+public interface PersistedState extends AutoCloseable {
 
 	int LOOK_UP = 5521; //magic numbers
 	int LOOK_DOWN = 5256;
 
-	@NotNull This create(final ApiObject resource);
+	@NotNull OperationResult create(final ApiObject resource);
 
 	/**
-	 * @param resource
-	 * @return State after the operation.
+	 * @param resource Subject.
+	 * @return Operation result.
 	 */
-	@NotNull This update(final ApiObject resource);
+	@NotNull OperationResult update(final ApiObject resource);
 
 	/**
-	 * @param resource
-	 * @return State after the operation.
+	 * @param resource Subject.
+	 * @return Operation result.
 	 */
-	@NotNull This delete(final ApiObject resource);
+	@NotNull OperationResult delete(final ApiObject resource);
 
 	/**
-	 * @param name      Resource name.
-	 * @param direction Lookup direction.
+	 * @param name Resource name. If null, all resources matching the given
+	 *             type will be returned.
 	 * @return This.
 	 */
-	@NotNull ApiObject get(
-		final String name,
-		final Lookup direction
+	@NotNull OperationResult get(
+		final String name
 	) throws OperationException;
 
-
-	@NotNull
-	ApiObject get(
-		final String name,
-		final Typeable type,
-		final Lookup direction
-	) throws OperationException;
 
 	/**
-	 * Get entity.
+	 * Get resource by name and type.
 	 *
-	 * @param name Name.
-	 * @param type Type.
-	 * @return Object identified by name and/or type, or null.
+	 * @param name Resource name. If null, all resources matching the given
+	 *             type will be returned.
+	 * @param type Resource type. Can be null.
+	 * @return Operation result.
 	 */
-	ApiObject get(
-		@Nullable final String name,
-		@Nullable final Typeable type
+	@NotNull
+	OperationResult get(
+		final String name,
+		final Typeable type
 	) throws OperationException;
 
-	enum Lookup {
-		/**
-		 * Retrieve a single result.
-		 */
-		SINGLE,
-
-		/**
-		 * Get resource and its parents.
-		 */
-		PARENTS,
-
-		/**
-		 * Get resource and its children.
-		 */
-		CHILDREN,
-	}
 }

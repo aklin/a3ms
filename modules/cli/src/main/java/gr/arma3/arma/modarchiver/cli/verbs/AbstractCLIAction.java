@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
+import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;

@@ -45,10 +45,7 @@ public class Utils {
 
 	public static final Pattern NAME_RGX;
 	public static final Pattern DESC_RGX;
-	/**
-	 * (type:name)
-	 */
-	public static final Pattern FQN_RGX;
+
 
 	static {
 		validator = Validation.byDefaultProvider()
@@ -74,20 +71,22 @@ public class Utils {
 
 		NAME_RGX = Pattern.compile("[\\w\\d_-]*");
 		DESC_RGX = Pattern.compile("[\\w\\d\\s]*");
-		FQN_RGX = Pattern.compile("("
-			+ NAME_RGX.pattern() + "):("
-			+ NAME_RGX.pattern() + ")");
 	}
 
 	static int getSizeKiB(final Path path) {
 		return (int) Math.ceil(path.toFile().length());
 	}
 
-	public static <T extends ApiObject> T parseFile(final Path path) throws
+	public static ApiObject parseFile(final Path path) throws
 		IOException {
+		final Typeable deser;
 		final String raw = Files.lines(path)
 			.collect(Collectors.joining("--- !<"));
-		return deserialize(raw);
+		deser = deserialize(raw);
+
+		return deser != null && deser.getClass().isInstance(ApiObject.class)
+			? (ApiObject) deser
+			: null;
 	}
 
 	/**
@@ -112,10 +111,6 @@ public class Utils {
 			Errors.fromThrowable(e);
 			return Instant.EPOCH;
 		}
-	}
-
-	public static String getFQN(final ApiObject obj) {
-		return obj.getType() + ":" + obj.getMeta().getName();
 	}
 
 	/**
@@ -193,7 +188,7 @@ public class Utils {
 			.build();
 	}
 
-	public static <E extends Typeable> E deserialize(final String raw) {
+	public static ApiObject deserialize(final String raw) {
 		try {
 			return mapper.readValue(raw, new TypeReference<>() {
 				@Override

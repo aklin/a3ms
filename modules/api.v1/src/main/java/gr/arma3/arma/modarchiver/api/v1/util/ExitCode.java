@@ -13,6 +13,7 @@ public class ExitCode {
 	@Getter
 	public enum App implements ExitCondition {
 		OK(0, "", false),
+		PARTIAL_FAILURE(-10, "Some operations failed."),
 		OK_DRY_RUN(0,
 			"Success but nothing changed (used with --dryRun)",
 			false),

@@ -136,7 +136,7 @@ class UtilsTest {
 				assertNotEquals("", serialized);
 				assertEquals(serialized, Utils.serialize(modFile));
 
-				deserialized = Utils.<ModFile>deserialize(serialized);
+				deserialized = Utils.deserialize(serialized);
 
 				assertNotNull(deserialized);
 				assertEquals("ModFile", deserialized.getType());
