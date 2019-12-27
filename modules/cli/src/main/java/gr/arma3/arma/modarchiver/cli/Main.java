@@ -9,7 +9,6 @@ import picocli.CommandLine;
 @RequiredArgsConstructor
 public class Main {
 
-	@CommandLine.Parameters
 	private static String[] args;
 
 	public static void main(String[] args) throws Exception {

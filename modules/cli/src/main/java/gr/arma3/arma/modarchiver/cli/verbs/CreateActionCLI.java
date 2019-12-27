@@ -2,9 +2,7 @@ package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 import picocli.CommandLine;
 
@@ -17,8 +15,6 @@ import java.io.File;
 	version = "1.0"
 )
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
 public class CreateActionCLI extends AbstractCLIAction {
 
@@ -30,9 +26,7 @@ public class CreateActionCLI extends AbstractCLIAction {
 
 	@CommandLine.Option(
 		defaultValue = "false",
-		names = {
-			"--dryRun"
-		},
+		names = {"--dryRun"},
 		description = "Do not change server state, but pretend to do so."
 	)
 	private boolean dryRun;
@@ -59,6 +53,6 @@ public class CreateActionCLI extends AbstractCLIAction {
 	 */
 	@Override
 	protected ExitCondition persistResult() {
-		return ExitCode.App.INIT_FAILURE;
+		return ExitCode.App.OK;
 	}
 }

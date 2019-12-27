@@ -3,6 +3,8 @@ package gr.arma3.arma.modarchiver.cli;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.cli.verbs.CreateActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.DeleteActionCLI;
+import gr.arma3.arma.modarchiver.cli.verbs.GetActionCLI;
+import gr.arma3.arma.modarchiver.cli.verbs.UpdateActionCLI;
 import gr.arma3.arma.modarchiver.state.redis.RedisPersistentState;
 import lombok.Getter;
 import picocli.CommandLine;
@@ -17,8 +19,10 @@ import java.util.concurrent.Callable;
 	version = "1.0",
 	subcommands = {
 		CommandLine.HelpCommand.class,
+		UpdateActionCLI.class,
 		DeleteActionCLI.class,
 		CreateActionCLI.class,
+		GetActionCLI.class,
 	}
 )
 @Getter

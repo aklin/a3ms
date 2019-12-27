@@ -29,6 +29,6 @@ public class AppCLITest {
 
 	@Test
 	void testNoArgs() {
-		assertEquals(0, Main.callWithArgs(""));
+		assertEquals(2, Main.callWithArgs(""));
 	}
 }
