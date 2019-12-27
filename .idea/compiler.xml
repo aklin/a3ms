@@ -12,11 +12,51 @@
           <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.0.4/picocli-4.0.4.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
         </processorPath>
-        <module name="api.v1" />
-        <module name="cli" />
-        <module name="api.state.v1" />
-        <module name="redis-state" />
         <module name="arma3-mod-archiver" />
+      </profile>
+      <profile name="Annotation profile for api.v1" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli-codegen/4.1.4/picocli-codegen-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.1.4/picocli-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
+        </processorPath>
+        <module name="api.v1" />
+      </profile>
+      <profile name="Annotation profile for cli" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli-codegen/4.1.4/picocli-codegen-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.1.4/picocli-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
+        </processorPath>
+        <module name="cli" />
+      </profile>
+      <profile name="Annotation profile for api.state.v1" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli-codegen/4.1.4/picocli-codegen-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.1.4/picocli-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
+        </processorPath>
+        <module name="api.state.v1" />
+      </profile>
+      <profile name="Annotation profile for redis-state" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli-codegen/4.1.4/picocli-codegen-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/info/picocli/picocli/4.1.4/picocli-4.1.4.jar" />
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.8/lombok-1.18.8.jar" />
+        </processorPath>
+        <module name="redis-state" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +66,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="arma3-mod-archiver" options="" />
+      <module name="cli" options="" />
     </option>
   </component>
 </project>
