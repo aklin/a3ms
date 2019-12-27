@@ -9,7 +9,6 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import state.PersistedState;
 import state.StateUtils;
-import state.operations.OperationException;
 
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
@@ -32,17 +31,31 @@ public class RedisPersistentState implements PersistedState {
 
 	@Override
 	public OperationResult create(ApiObject resource) {
-		final String type = resource.getType();
-		final String name = resource.getMeta().getName();
+		final String fqn = StateUtils.getFQN(resource);
+		final OperationResult lookup = get(fqn);
+		final long failCount;
 
-		try (final RedisConnection<String, ApiObject> conn =
-				 pool.allocateConnection()) {
+		if (!lookup.getExitCondition().isError()
+			&& lookup.getResources().size() == 0
+		) try (final RedisConnection<String, ApiObject> conn =
+				   pool.allocateConnection()) {
 
-			"OK".equalsIgnoreCase(conn.set(StateUtils.getFQN(resource),
-				resource));
+			conn.multi();
+
+			failCount = conn.exec().stream()
+				.map(Object::toString)
+				.filter(s -> !"OK".equalsIgnoreCase(s))
+				.count();
+
+			return new OpResult(failCount == 0
+				? ExitCode.App.OK
+				: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+				Collections.singletonList(resource));
 		}
 
-		return null;
+		return new OpResult(
+			ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+			Collections.singletonList(resource));
 	}
 
 	/**
@@ -51,7 +64,26 @@ public class RedisPersistentState implements PersistedState {
 	 */
 	@Override
 	public @NotNull OperationResult update(ApiObject resource) {
-		return null;
+		final String fqn = StateUtils.getFQN(resource);
+		final long failCount;
+
+		try (final RedisConnection<String, ApiObject> conn =
+				 pool.allocateConnection()) {
+
+			conn.multi();
+			conn.watch(fqn);
+			conn.set(fqn, resource);
+
+			failCount = conn.exec().stream()
+				.map(Object::toString)
+				.filter(s -> !"OK".equalsIgnoreCase(s))
+				.count();
+
+			return new OpResult(failCount == 0
+				? ExitCode.App.OK
+				: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+				Collections.singletonList(resource));
+		}
 	}
 
 	/**
@@ -95,8 +127,20 @@ public class RedisPersistentState implements PersistedState {
 	 * @return This.
 	 */
 	@Override
-	public @NotNull OperationResult get(String name) throws OperationException {
+	public @NotNull OperationResult get(String name) {
+		return get(name, null);
+	}
 
+	/**
+	 * Get resource by name and type.
+	 *
+	 * @param name Resource name. If null, all resources matching the given
+	 *             type will be returned.
+	 * @param type Resource type. Can be null.
+	 * @return Operation result.
+	 */
+	@Override
+	public @NotNull OperationResult get(String name, Typeable type) {
 		try (final RedisConnection<String, ApiObject> conn =
 				 pool.allocateConnection()) {
 			final List<ApiObject> result;
@@ -114,24 +158,9 @@ public class RedisPersistentState implements PersistedState {
 				.map(Utils::deserialize)
 				.collect(Collectors.toList());
 
-
 			return new OpResult(ExitCode.App.OK, result);
 		}
 
-	}
-
-	/**
-	 * Get resource by name and type.
-	 *
-	 * @param name Resource name. If null, all resources matching the given
-	 *             type will be returned.
-	 * @param type Resource type. Can be null.
-	 * @return Operation result.
-	 */
-	@Override
-	public @NotNull OperationResult get(String name, Typeable type) throws
-		OperationException {
-		return null;
 	}
 
 	@Override
