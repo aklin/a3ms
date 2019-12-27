@@ -14,8 +14,8 @@
         </processorPath>
         <module name="api.v1" />
         <module name="cli" />
-        <module name="redis-state" />
         <module name="api.state.v1" />
+        <module name="redis-state" />
         <module name="arma3-mod-archiver" />
       </profile>
     </annotationProcessing>
