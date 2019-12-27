@@ -1,6 +1,6 @@
-package gr.arma3.arma.modarchiver.api.v1.util;
+package gr.arma3.arma.modarchiver.api.v1.interfaces;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Describable;
+import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 
 public interface ExitCondition extends Describable {
 

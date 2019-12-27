@@ -12,6 +12,7 @@ import gr.arma3.arma.modarchiver.api.v1.Mod;
 import gr.arma3.arma.modarchiver.api.v1.ModFile;
 import gr.arma3.arma.modarchiver.api.v1.UserInfoMessage;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.experimental.UtilityClass;
 import lombok.extern.java.Log;

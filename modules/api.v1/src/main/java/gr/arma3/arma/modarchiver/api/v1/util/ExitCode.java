@@ -1,5 +1,6 @@
 package gr.arma3.arma.modarchiver.api.v1.util;
 
+import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.UtilityClass;
