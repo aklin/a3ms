@@ -3,7 +3,6 @@ package gr.arma3.arma.modarchiver.api.v1;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -26,7 +25,6 @@ import java.util.List;
 public class ModFile implements ApiObject {
 
 	String type = "ModFile";
-	Class<? extends Typeable> classRef = ModFile.class;
 	/**
 	 * File name, not including path.
 	 */

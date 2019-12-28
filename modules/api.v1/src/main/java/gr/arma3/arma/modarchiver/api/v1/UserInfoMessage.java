@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode
 public class UserInfoMessage implements ApiObject {
 	private final String type = "UserInfoMessage";
-	private final Class<UserInfoMessage> classRef = UserInfoMessage.class;
 
 	@NotNull
 	@Builder.Default

@@ -22,7 +22,6 @@ import java.util.TreeSet;
 public class Mod implements ApiObject, Revisable<Mod> {
 
 	private final String type = "Mod";
-	private final Class<Mod> classRef = Mod.class;
 
 	private final Meta meta;
 
