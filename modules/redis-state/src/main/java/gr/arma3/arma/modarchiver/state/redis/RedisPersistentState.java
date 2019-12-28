@@ -34,10 +34,14 @@ public class RedisPersistentState implements PersistedState {
 		final OperationResult lookup = get(fqn);
 		final long failCount;
 
-		if (!lookup.getExitCondition().isError()
-			&& lookup.getResources().size() == 0
-		) try (final RedisConnection<String, ApiObject> conn =
-				   pool.allocateConnection()) {
+		if (!lookup.getResources().isEmpty()) {
+			return new OpResult(
+				ExitCode.ResourceOperation.ALREADY_EXISTS,
+				Collections.singletonList(resource));
+		}
+
+		try (final RedisConnection<String, ApiObject> conn =
+				 pool.allocateConnection()) {
 
 			conn.multi();
 
@@ -45,15 +49,11 @@ public class RedisPersistentState implements PersistedState {
 				.map(Object::toString)
 				.filter(s -> !"OK".equalsIgnoreCase(s))
 				.count();
-
-			return new OpResult(failCount == 0
-				? ExitCode.App.OK
-				: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
-				Collections.singletonList(resource));
 		}
 
-		return new OpResult(
-			ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+		return new OpResult(failCount == 0
+			? ExitCode.App.OK
+			: ExitCode.ResourceOperation.SAVE_ERROR,
 			Collections.singletonList(resource));
 	}
 
@@ -80,7 +80,7 @@ public class RedisPersistentState implements PersistedState {
 
 			return new OpResult(failCount == 0
 				? ExitCode.App.OK
-				: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+				: ExitCode.ResourceOperation.SAVE_ERROR,
 				Collections.singletonList(resource));
 		}
 	}
@@ -113,20 +113,10 @@ public class RedisPersistentState implements PersistedState {
 			return new OpResult(
 				failCount == 0
 					? ExitCode.App.OK
-					: ExitCode.ResourceOperation.PERSISTENCE_ERROR,
+					: ExitCode.ResourceOperation.SAVE_ERROR,
 				Collections.singletonList(resource)
 			);
 		}
-	}
-
-	/**
-	 * @param name Resource name. If null, all resources matching the given
-	 *             type will be returned.
-	 * @return This.
-	 */
-	@Override
-	public @NotNull OperationResult get(String name) {
-		return get(name, null);
 	}
 
 	/**
@@ -143,12 +133,11 @@ public class RedisPersistentState implements PersistedState {
 				 pool.allocateConnection()) {
 			final List<ApiObject> result;
 
-			name = name == null ? Utils.NAME_RGX.pattern() : name;
-			type = type == null ? Utils.NAME_RGX.pattern() : type;
-
 			conn.multi();
 
-			conn.scan(ScanArgs.Builder.matches(type + ":" + name))
+			conn.scan(
+				ScanArgs.Builder.matches(StateUtils
+					.getFQNLookupRegex(name, type).pattern()))
 				.getKeys()
 				.stream()
 				.peek(conn::watch)

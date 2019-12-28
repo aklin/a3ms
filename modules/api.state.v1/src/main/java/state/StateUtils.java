@@ -26,6 +26,13 @@ public class StateUtils {
 		return obj.getType() + ":" + obj.getMeta().getName();
 	}
 
+	public static Pattern getFQNLookupRegex(String name, String type) {
+		name = name == null ? Utils.NAME_RGX.pattern() : name;
+		type = type == null ? Utils.NAME_RGX.pattern() : type;
+
+		return Pattern.compile(type + ":" + name);
+	}
+
 	public static <E extends ApiObject> boolean delete(final E resource) {
 		return false;
 	}

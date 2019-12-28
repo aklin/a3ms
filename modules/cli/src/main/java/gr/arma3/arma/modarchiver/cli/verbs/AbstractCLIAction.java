@@ -43,7 +43,7 @@ abstract class AbstractCLIAction
 				: persistResult();
 			exitCondition = result.getExitCondition();
 		} catch (IOException e) {
-			return new OpResult(ExitCode.ResourceOperation.PERSISTENCE_ERROR);
+			return new OpResult(ExitCode.ResourceOperation.SAVE_ERROR);
 		}
 
 		return result;

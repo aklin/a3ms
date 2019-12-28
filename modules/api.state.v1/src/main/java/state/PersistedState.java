@@ -10,39 +10,54 @@ import javax.validation.constraints.NotNull;
  */
 public interface PersistedState extends AutoCloseable {
 
-	int LOOK_UP = 5521; //magic numbers
-	int LOOK_DOWN = 5256;
-
+	/**
+	 * Create new resource.
+	 * <p>
+	 * THis operation will fail if the resource exists.
+	 *
+	 * @param resource Subject.
+	 * @return Operation result.
+	 */
 	@NotNull OperationResult create(final ApiObject resource);
 
 	/**
+	 * Update existing resource.
+	 * <p>
+	 * If the resource cannot be found, this method must create it.
+	 *
 	 * @param resource Subject.
 	 * @return Operation result.
 	 */
 	@NotNull OperationResult update(final ApiObject resource);
 
 	/**
+	 * Delete existing resource.
+	 * <p>
+	 * Resource must exist or this operation will report failure.
+	 *
 	 * @param resource Subject.
 	 * @return Operation result.
 	 */
 	@NotNull OperationResult delete(final ApiObject resource);
 
 	/**
-	 * @param name Resource name. If null, all resources matching the given
-	 *             type will be returned.
+	 * @param name Resource name. If null, all resources will be returned.
 	 * @return This.
 	 */
-	@NotNull OperationResult get(
+	@NotNull
+	default OperationResult get(
 		final String name
-	);
+	) {
+		return get(name, null);
+	}
 
 
 	/**
 	 * Get resource by name and type.
 	 *
-	 * @param name Resource name. If null, all resources matching the given
-	 *             type will be returned.
-	 * @param type Resource type. Can be null.
+	 * @param name Resource name. If null, all resources of matching type will
+	 *             be returned.
+	 * @param type Resource type. If null, all types will match.
 	 * @return Operation result.
 	 */
 	@NotNull
@@ -50,5 +65,18 @@ public interface PersistedState extends AutoCloseable {
 		final String name,
 		final String type
 	);
+
+
+	@NotNull
+	default OperationResult get(ApiObject resource) {
+		return get(
+			resource == null
+				? null
+				: resource.getMeta().getName(),
+			resource == null
+				? null
+				: resource.getType()
+		);
+	}
 
 }

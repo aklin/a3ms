@@ -38,12 +38,24 @@ public class ExitCode {
 
 	@Getter
 	@RequiredArgsConstructor
-	public enum ResourceOperation implements ExitCondition {
-		NOT_FOUND(100, "One or more files could not be found."),
-		NOT_READABLE(101,
-			"One or more files were located, but could not be read."),
+	public enum Parser implements ExitCondition {
+		NOT_READABLE(101, "File was found but could not be read."),
+		EXPECTED_FILE(105, "Expected resource to be a file, not a directory."),
+		EXPECTED_DIR(106, "Expected resource to be a directory, not a file."),
 		PARSE_ERROR(110, "Syntax error."),
-		PERSISTENCE_ERROR(150,
+		;
+		private final int exitCode;
+		private final String description;
+		private final boolean isError = true;
+	}
+
+	@Getter
+	@RequiredArgsConstructor
+	public enum ResourceOperation implements ExitCondition {
+		NOT_FOUND(200, "Resource not found."),
+		ALREADY_EXISTS(202, "Resource already exists."),
+
+		SAVE_ERROR(250,
 			"Error saving changes. Changes might be partially saved."),
 		;
 
