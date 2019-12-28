@@ -32,13 +32,4 @@ public class StateUtils {
 
 		return Pattern.compile(type + ":" + name);
 	}
-
-	public static <E extends ApiObject> boolean delete(final E resource) {
-		return false;
-	}
-
-
-	public static <E extends ApiObject> E create(E resource) {
-		return null;
-	}
 }
