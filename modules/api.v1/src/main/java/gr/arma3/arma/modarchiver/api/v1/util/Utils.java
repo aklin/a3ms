@@ -25,6 +25,7 @@ import javax.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -32,7 +33,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -79,14 +79,7 @@ public class Utils {
 
 	public static ApiObject parseFile(final Path path) throws
 		IOException {
-		final Typeable deser;
-		final String raw = Files.lines(path)
-			.collect(Collectors.joining("--- !<"));
-		deser = deserialize(raw);
-
-		return deser != null && deser.getClass().isInstance(ApiObject.class)
-			? (ApiObject) deser
-			: null;
+		return deserialize(Files.readString(path));
 	}
 
 	/**
@@ -192,7 +185,7 @@ public class Utils {
 		try {
 			return mapper.readValue(raw, new TypeReference<>() {
 				@Override
-				public java.lang.reflect.Type getType() {
+				public Type getType() {
 					return super.getType();
 				}
 			});
