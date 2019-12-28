@@ -5,9 +5,9 @@ import gr.arma3.arma.modarchiver.cli.verbs.CreateActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.DeleteActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.GetActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.UpdateActionCLI;
-import gr.arma3.arma.modarchiver.state.redis.RedisPersistentState;
 import lombok.Getter;
 import picocli.CommandLine;
+import state.MemoryPersistedState;
 import state.PersistedState;
 
 import java.util.concurrent.Callable;
@@ -30,7 +30,7 @@ public class App implements Callable<OperationResult> {
 	private static PersistedState state;
 
 	public App() {
-		state = state == null ? new RedisPersistentState() : state;
+		state = state == null ? new MemoryPersistedState() : state;
 	}
 
 	@Override
