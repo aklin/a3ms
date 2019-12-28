@@ -1,8 +1,10 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
+import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
@@ -56,8 +58,11 @@ abstract class AbstractCLIAction
 
 
 	protected ApiObject processInput() throws IOException {
-		final ApiObject obj =
-			Utils.parseFile(getModFolder().toPath());
+		if (getModFolder() == null) {
+			return new DummyAPIObject();
+		}
+
+		final ApiObject obj = Utils.parseFile(getModFolder().toPath());
 
 		this.setExitCondition(
 			Utils.validate(obj)
@@ -90,6 +95,15 @@ abstract class AbstractCLIAction
 	@Override
 	public final int getExitCode() {
 		return exitCondition.getExitCode();
+	}
+
+	@Getter
+	protected class DummyAPIObject implements ApiObject {
+		final String type = "ResourceOperation";
+		final Class<DummyAPIObject> classRef = DummyAPIObject.class;
+		final MetaInfo meta = Meta.builder()
+			.name(getResourceIdentifier())
+			.build();
 	}
 
 }
