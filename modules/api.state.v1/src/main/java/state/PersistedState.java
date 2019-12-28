@@ -2,8 +2,6 @@ package state;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
-import state.operations.OperationException;
 
 import javax.validation.constraints.NotNull;
 
@@ -36,7 +34,7 @@ public interface PersistedState extends AutoCloseable {
 	 */
 	@NotNull OperationResult get(
 		final String name
-	) throws OperationException;
+	);
 
 
 	/**
@@ -50,7 +48,7 @@ public interface PersistedState extends AutoCloseable {
 	@NotNull
 	OperationResult get(
 		final String name,
-		final Typeable type
-	) throws OperationException;
+		final String type
+	);
 
 }

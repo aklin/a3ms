@@ -1,6 +1,6 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import lombok.Getter;
 import picocli.CommandLine;
 
@@ -48,7 +48,7 @@ public class UpdateActionCLI extends AbstractCLIAction {
 	 * @return Exit condition
 	 */
 	@Override
-	protected ExitCondition persistResult() {
+	protected OperationResult persistResult() {
 		return null;
 	}
 }

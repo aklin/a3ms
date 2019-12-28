@@ -7,10 +7,13 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import lombok.Getter;
+import lombok.Setter;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @Getter
@@ -26,27 +29,22 @@ abstract class AbstractCLIAction
 
 	public abstract File getModFolder();
 
-	public final OperationResult call() {
-		System.out.println("Executing!");
-		System.out.println(this.toString());
-		ApiObject input = null;
+	@Setter
+	protected List<ApiObject> results = Collections.emptyList();
 
+	public final OperationResult call() {
+		final OperationResult result;
 
 		try {
-			input = processInput();
-		} catch (Exception e) {
-			exitCondition = ExitCode.ResourceOperation.PARSE_ERROR;
+			result = isDryRun()
+				? new OpResult(ExitCode.App.OK_DRY_RUN)
+				: persistResult();
+			exitCondition = result.getExitCondition();
+		} catch (IOException e) {
+			return new OpResult(ExitCode.ResourceOperation.PERSISTENCE_ERROR);
 		}
 
-
-		if (!isDryRun()) try {
-			exitCondition = persistResult();
-		} catch (Exception e) {
-			exitCondition = ExitCode.ResourceOperation.PERSISTENCE_ERROR;
-		}
-
-
-		return new OpResult(exitCondition, Collections.singletonList(input));
+		return result;
 	}
 
 	/**
@@ -54,10 +52,10 @@ abstract class AbstractCLIAction
 	 *
 	 * @return Exit condition
 	 */
-	protected abstract ExitCondition persistResult();
+	protected abstract OperationResult persistResult() throws IOException;
 
 
-	protected ApiObject processInput() throws Exception {
+	protected ApiObject processInput() throws IOException {
 		final ApiObject obj =
 			Utils.parseFile(getModFolder().toPath());
 

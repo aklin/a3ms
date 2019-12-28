@@ -38,4 +38,8 @@ public class App implements Callable<OperationResult> {
 		System.out.println("call App");
 		return null;
 	}
+
+	public static PersistedState getState() {
+		return state;
+	}
 }

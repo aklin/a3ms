@@ -1,12 +1,13 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
-import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
+import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
 import lombok.ToString;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
 
 @CommandLine.Command(
 	description = "Create a resource.",
@@ -52,7 +53,7 @@ public class CreateActionCLI extends AbstractCLIAction {
 	 * @return Exit condition
 	 */
 	@Override
-	protected ExitCondition persistResult() {
-		return ExitCode.App.OK;
+	protected OperationResult persistResult() throws IOException {
+		return App.getState().create(processInput());
 	}
 }

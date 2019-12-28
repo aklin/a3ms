@@ -4,7 +4,6 @@ import com.lambdaworks.redis.*;
 import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
-import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import state.PersistedState;
@@ -139,15 +138,17 @@ public class RedisPersistentState implements PersistedState {
 	 * @return Operation result.
 	 */
 	@Override
-	public @NotNull OperationResult get(String name, Typeable type) {
+	public @NotNull OperationResult get(String name, String type) {
 		try (final RedisConnection<String, ApiObject> conn =
 				 pool.allocateConnection()) {
 			final List<ApiObject> result;
-			final String typeStr = type == null ? "*" : type.getType();
+
+			name = name == null ? Utils.NAME_RGX.pattern() : name;
+			type = type == null ? Utils.NAME_RGX.pattern() : type;
 
 			conn.multi();
 
-			conn.scan(ScanArgs.Builder.matches(typeStr + ":" + name))
+			conn.scan(ScanArgs.Builder.matches(type + ":" + name))
 				.getKeys()
 				.stream()
 				.peek(conn::watch)
