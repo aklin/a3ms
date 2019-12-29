@@ -7,10 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import gr.arma3.arma.modarchiver.api.v1.Meta;
-import gr.arma3.arma.modarchiver.api.v1.Mod;
-import gr.arma3.arma.modarchiver.api.v1.ModFile;
-import gr.arma3.arma.modarchiver.api.v1.UserInfoMessage;
+import gr.arma3.arma.modarchiver.api.v1.*;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Typeable;
@@ -68,6 +65,13 @@ public class Utils {
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
+
+		mapper.registerSubtypes(
+			Mod.class,
+			ModFile.class,
+			Modset.class,
+			Repository.class
+		);
 
 		NAME_RGX = Pattern.compile("[\\w\\d_-]*");
 		DESC_RGX = Pattern.compile("[\\w\\d\\s]*");
@@ -195,7 +199,6 @@ public class Utils {
 				raw);
 			return null;
 		}
-
 	}
 
 	public static String serialize(Typeable serializable) {

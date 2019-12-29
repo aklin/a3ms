@@ -2,6 +2,7 @@ package gr.arma3.arma.modarchiver.api.v1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.Revisable;
 import lombok.Builder;
@@ -19,6 +20,8 @@ import java.util.TreeSet;
  */
 @Getter
 @EqualsAndHashCode
+@Builder(toBuilder = true)
+@JsonTypeName("Mod")
 public class Mod implements ApiObject, Revisable<Mod> {
 
 	private final String type = "Mod";

@@ -1,6 +1,9 @@
 package gr.arma3.arma.modarchiver.api.v1;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,18 +23,26 @@ import java.util.List;
 @Getter
 @Builder(toBuilder = true)
 @EqualsAndHashCode
+@JsonTypeName("Modset")
 public class Modset implements ApiObject {
 
 	@NotNull
-	@Builder.Default
-	private final List<Mod> modList = Collections.emptyList();
+	private final MetaInfo meta;
+
+	private final String type = "Modset";
 
 	@NotNull
-	private final Meta meta;
-	private transient int modListHashCode;
+	private final List<Mod> modList;
 
-	@Builder.Default
-	private final String type = "Modset";
+	public Modset(
+		@JsonProperty("meta") MetaInfo meta,
+		@JsonProperty("modList") List<Mod> modList
+	) {
+		this.meta = meta;
+		this.modList = modList == null
+			? Collections.emptyList()
+			: modList;
+	}
 
 	/**
 	 * Create a new modset containing the common mods found in
