@@ -1,6 +1,5 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
-import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
@@ -20,6 +19,9 @@ import java.io.IOException;
 @ToString
 public class GetActionCLI extends AbstractCLIAction {
 
+	@CommandLine.ParentCommand
+	private App context;
+
 
 	@CommandLine.Option(
 		names = {"-f", "--file"},
@@ -35,12 +37,16 @@ public class GetActionCLI extends AbstractCLIAction {
 	private boolean dryRun;
 
 	@CommandLine.Parameters(
+		index = "0",
+		arity = "0..1",
 		paramLabel = "TYPE",
 		description = "Resource type. Required."
 	)
 	private String resourceType;
 
 	@CommandLine.Parameters(
+		index = "1",
+		arity = "0..1",
 		paramLabel = "NAME",
 		description = "Resource name."
 	)
@@ -53,7 +59,6 @@ public class GetActionCLI extends AbstractCLIAction {
 	 */
 	@Override
 	protected OperationResult persistResult() throws IOException {
-		final ApiObject o = processInput();
-		return App.getState().get(o.getMeta().getName(), o.getType());
+		return App.getState().get(processInput());
 	}
 }

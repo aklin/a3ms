@@ -4,6 +4,7 @@ package gr.arma3.arma.modarchiver.api.v1.interfaces;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import gr.arma3.arma.modarchiver.api.v1.Meta;
+import lombok.NonNull;
 
 import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 })
 public interface Typeable extends Serializable {
 
+	@NonNull
 	@NotEmpty(message = "type must not be empty.")
 	String getType();
 }

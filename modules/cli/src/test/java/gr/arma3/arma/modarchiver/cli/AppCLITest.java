@@ -41,19 +41,28 @@ public class AppCLITest {
 		final File validFile = new File(path);
 
 		raw = Files.readString(validFile.toPath());
-		System.out.println("Raw");
-		System.out.println(raw);
-		System.out.println("*********");
 
 		final ApiObject modset = Utils.deserialize(raw);
 
 		assertEquals(0,
-			Main.callWithArgs("create", "-f", validFile.getPath()));
+			Main.callWithArgs(
+				"create",
+				"-f",
+				validFile.getPath()
+			));
+
+		assertEquals(0,
+			Main.callWithArgs(
+				"get",
+				modset.getType(),
+				modset.getMeta().getName()
+			));
+
 	}
 
 
 	@Test
 	void testNoArgs() {
-		assertEquals(2, Main.callWithArgs(""));
+		assertEquals(0, Main.callWithArgs(""));
 	}
 }

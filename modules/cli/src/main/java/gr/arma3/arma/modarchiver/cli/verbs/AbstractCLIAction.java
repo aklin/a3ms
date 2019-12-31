@@ -2,6 +2,7 @@ package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.Meta;
 import gr.arma3.arma.modarchiver.api.v1.OpResult;
+import gr.arma3.arma.modarchiver.api.v1.UserInfoMessage;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ExitCondition;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
@@ -42,8 +43,17 @@ abstract class AbstractCLIAction
 				? new OpResult(ExitCode.App.OK_DRY_RUN)
 				: persistResult();
 			exitCondition = result.getExitCondition();
+
 		} catch (IOException e) {
-			return new OpResult(ExitCode.ResourceOperation.SAVE_ERROR);
+			final OperationResult oops =
+				new OpResult(ExitCode.ResourceOperation.SAVE_ERROR,
+					Collections.singletonList(UserInfoMessage.builder()
+						.severity(10)
+						.message(e.getLocalizedMessage())
+						.build())
+				);
+			exitCondition = oops.getExitCondition();
+			return oops;
 		}
 
 		return result;
@@ -94,16 +104,17 @@ abstract class AbstractCLIAction
 
 	@Override
 	public final int getExitCode() {
-		return exitCondition.getExitCode();
+		return (exitCondition == null
+			? ExitCode.App.INIT_FAILURE
+			: exitCondition
+		).getExitCode();
 	}
 
 	@Getter
 	protected class DummyAPIObject implements ApiObject {
-		final String type = "ResourceOperation";
-		final Class<DummyAPIObject> classRef = DummyAPIObject.class;
+		final String type = getResourceType();
 		final MetaInfo meta = Meta.builder()
 			.name(getResourceIdentifier())
 			.build();
 	}
-
 }

@@ -65,6 +65,7 @@ public class Utils {
 			false);
 		mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_AS_NULL,
 			true);
+		mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 
 		mapper.registerSubtypes(
 			Mod.class,
@@ -201,7 +202,7 @@ public class Utils {
 		}
 	}
 
-	public static String serialize(Typeable serializable) {
+	public static <E> String serializeAny(E serializable) {
 		try {
 			return mapper
 				.writerWithDefaultPrettyPrinter()
@@ -211,6 +212,10 @@ public class Utils {
 			log.severe(e.getMessage());
 			return "";
 		}
+	}
+
+	public static String serialize(Typeable serializable) {
+		return serializeAny(serializable);
 	}
 
 	public static UserInfoMessage fromExitCondition(final ExitCondition condition) {

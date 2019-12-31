@@ -1,6 +1,8 @@
 package gr.arma3.arma.modarchiver.cli;
 
+import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
+import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.cli.verbs.CreateActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.DeleteActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.GetActionCLI;
@@ -35,8 +37,7 @@ public class App implements Callable<OperationResult> {
 
 	@Override
 	public OperationResult call() throws Exception {
-		System.out.println("call App");
-		return null;
+		return new OpResult(ExitCode.App.OK);
 	}
 
 	public static PersistedState getState() {
