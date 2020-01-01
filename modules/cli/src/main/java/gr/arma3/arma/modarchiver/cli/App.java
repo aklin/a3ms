@@ -5,7 +5,6 @@ import gr.arma3.arma.modarchiver.cli.verbs.CreateActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.DeleteActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.GetActionCLI;
 import gr.arma3.arma.modarchiver.cli.verbs.UpdateActionCLI;
-import lombok.Getter;
 import picocli.CommandLine;
 import state.MemoryPersistedState;
 import state.PersistedState;
@@ -25,7 +24,6 @@ import java.util.concurrent.Callable;
 		GetActionCLI.class,
 	}
 )
-@Getter
 public class App implements Callable<OperationResult> {
 	private static PersistedState state;
 
@@ -51,6 +49,10 @@ public class App implements Callable<OperationResult> {
 	 */
 	public static void thisIsAHorribleCrime(final OperationResult lastOperation) {
 		App.lastOperation = lastOperation;
+	}
+
+	public static OperationResult getLastOperation() {
+		return App.lastOperation;
 	}
 
 	public static PersistedState getState() {

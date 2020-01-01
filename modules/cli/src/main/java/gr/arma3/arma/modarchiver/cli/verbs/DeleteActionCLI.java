@@ -34,12 +34,16 @@ public class DeleteActionCLI extends AbstractCLIAction {
 	private boolean dryRun;
 
 	@CommandLine.Parameters(
+		index = "0",
+		arity = "0..1",
 		paramLabel = "TYPE",
 		description = "Resource type. Required."
 	)
 	private String resourceType;
 
 	@CommandLine.Parameters(
+		index = "1",
+		arity = "0..1",
 		paramLabel = "NAME",
 		description = "Resource name."
 	)

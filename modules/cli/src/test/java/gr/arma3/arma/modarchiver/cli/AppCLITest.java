@@ -10,7 +10,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class AppCLITest {
 
@@ -21,8 +21,37 @@ public class AppCLITest {
 
 
 	@Test
-	void versionTest() {
-		assertEquals(0, Main.callWithArgs("-V"));
+	void deleteTest() throws IOException {
+		final File validFile =
+			new File(URLDecoder.decode(getClass().getClassLoader()
+					.getResource("bar.yaml").getFile(),
+				StandardCharsets.UTF_8
+			));
+
+		final ApiObject modset =
+			Utils.deserialize(Files.readString(validFile.toPath()));
+
+		assertTrue(Main.exec(
+			"delete",
+			modset.getType(),
+			modset.getMeta().getName()
+			).getExitCondition().isError()
+		);
+
+		assertFalse(Main.exec(
+			"create",
+			"-f",
+			validFile.getPath()
+			).getExitCondition().isError()
+		);
+
+
+		//this must succeed
+		assertFalse(Main.exec(
+			"delete",
+			modset.getType(),
+			modset.getMeta().getName()
+		).getExitCondition().isError());
 	}
 
 	@Test

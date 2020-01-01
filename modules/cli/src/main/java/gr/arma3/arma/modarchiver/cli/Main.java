@@ -69,7 +69,6 @@ public class Main {
 	 * Computes a result, or throws an exception if unable to do so.
 	 *
 	 * @return computed result
-	 * @throws Exception if unable to compute a result
 	 */
 	private OperationResult call() {
 		final CommandLine cmd = new CommandLine(new App());
@@ -91,6 +90,8 @@ public class Main {
 
 		cmd.execute(args);
 
-		return cmd.getExecutionResult();
+		return App.getLastOperation() == null
+			? cmd.getExecutionResult()
+			: App.getLastOperation();
 	}
 }
