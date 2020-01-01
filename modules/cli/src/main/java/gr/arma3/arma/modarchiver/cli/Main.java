@@ -51,6 +51,10 @@ public class Main {
 		return res == null ? 0 : res.getExitCondition().getExitCode();
 	}
 
+	public static String[] getArgs() {
+		return Main.args;
+	}
+
 	private static String[] fromObj(final Object[] objects) {
 		final String[] res = new String[objects.length];
 
@@ -70,7 +74,7 @@ public class Main {
 	private OperationResult call() {
 		final CommandLine cmd = new CommandLine(new App());
 
-		cmd.setExecutionStrategy(new CommandLine.RunFirst());
+		cmd.setExecutionStrategy(new CommandLine.RunAll());
 
 		if (cmd.isUsageHelpRequested() || cmd.isVersionHelpRequested()) {
 			System.out.println("help detected");

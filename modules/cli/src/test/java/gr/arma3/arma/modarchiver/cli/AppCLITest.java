@@ -26,11 +26,6 @@ public class AppCLITest {
 	}
 
 	@Test
-	void getTest() {
-		Main.callWithArgs("get");
-	}
-
-	@Test
 	void createTest() throws IOException {
 		final String raw;
 		final String path =
@@ -57,7 +52,6 @@ public class AppCLITest {
 				modset.getType(),
 				modset.getMeta().getName()
 			));
-
 	}
 
 

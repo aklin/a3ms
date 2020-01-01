@@ -9,6 +9,7 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.MetaInfo;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
 import lombok.Setter;
 import picocli.CommandLine;
@@ -22,7 +23,9 @@ import java.util.concurrent.Callable;
 @Getter
 abstract class AbstractCLIAction
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
+
 	private ExitCondition exitCondition = null;
+	private OperationResult result = null;
 
 	public abstract boolean isDryRun();
 
@@ -36,26 +39,24 @@ abstract class AbstractCLIAction
 	protected List<ApiObject> results = Collections.emptyList();
 
 	public final OperationResult call() {
-		final OperationResult result;
 
 		try {
-			result = isDryRun()
-				? new OpResult(ExitCode.App.OK_DRY_RUN)
-				: persistResult();
-			exitCondition = result.getExitCondition();
-
+			result = result != null
+				? result
+				: isDryRun()
+					? new OpResult(ExitCode.App.OK_DRY_RUN)
+					: persistResult();
 		} catch (IOException e) {
-			final OperationResult oops =
-				new OpResult(ExitCode.ResourceOperation.SAVE_ERROR,
-					Collections.singletonList(UserInfoMessage.builder()
-						.severity(10)
-						.message(e.getLocalizedMessage())
-						.build())
-				);
-			exitCondition = oops.getExitCondition();
-			return oops;
+			result = new OpResult(ExitCode.ResourceOperation.SAVE_ERROR,
+				Collections.singletonList(UserInfoMessage.builder()
+					.severity(10)
+					.message(e.getLocalizedMessage())
+					.build())
+			);
 		}
 
+		exitCondition = result.getExitCondition();
+		App.thisIsAHorribleCrime(result);
 		return result;
 	}
 
@@ -68,11 +69,9 @@ abstract class AbstractCLIAction
 
 
 	protected ApiObject processInput() throws IOException {
-		if (getModFolder() == null) {
-			return new DummyAPIObject();
-		}
-
-		final ApiObject obj = Utils.parseFile(getModFolder().toPath());
+		final ApiObject obj = getModFolder() == null
+			? new DummyAPIObject()
+			: Utils.parseFile(getModFolder().toPath());
 
 		this.setExitCondition(
 			Utils.validate(obj)
@@ -80,7 +79,6 @@ abstract class AbstractCLIAction
 				: ExitCode.ResourceOperation.NOT_FOUND
 		);
 		return obj;
-
 	}
 
 	public final ExitCondition getExitCondition() {
