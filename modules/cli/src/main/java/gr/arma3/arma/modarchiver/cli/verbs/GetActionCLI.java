@@ -52,6 +52,10 @@ public class GetActionCLI extends AbstractCLIAction {
 	)
 	private String resourceIdentifier;
 
+	public GetActionCLI() {
+		super("get");
+	}
+
 	/**
 	 * Implement this method with persistence logic.
 	 *

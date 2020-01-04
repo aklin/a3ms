@@ -31,19 +31,22 @@ public class App implements Callable<OperationResult> {
 
 
 	public App() {
+		initState();
+	}
+
+	private static void initState() {
 		state = state == null ? new MemoryPersistedState() : state;
 	}
+
+	static void clearState() {
+		state.reset();
+	}
+
 
 	/**
 	 * Implementation note: Used by AbstractCLIAction to notify App (the
 	 * "context") of the last executed operation. CLIAction does not know nor
 	 * care about what App does with this information.
-	 * <p>
-	 * The reason why it's a horrible crime is, that I've been forced into a
-	 * corner by picocli (not throwing shade here, just a consequence of
-	 * early assumptions on my part that turned out to be wrong. For example,
-	 * the assumption that picocli would actually fucking work) and I have to
-	 * break modularity to get the thing chooching along.
 	 *
 	 * @param lastOperation
 	 */

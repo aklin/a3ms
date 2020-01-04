@@ -27,6 +27,7 @@ public class MemoryPersistedState implements PersistedState {
 		final String fqn = StateUtils.getFQN(resource);
 
 		return new OpResult(
+			"create",
 			(!state.containsKey(fqn)
 				//save happens here
 				&& state.put(fqn, resource) == null)
@@ -46,6 +47,7 @@ public class MemoryPersistedState implements PersistedState {
 		state.put(StateUtils.getFQN(resource), resource);
 
 		return new OpResult(
+			"update",
 			ExitCode.App.OK,
 			Collections.singletonList(resource)
 		);
@@ -59,12 +61,24 @@ public class MemoryPersistedState implements PersistedState {
 	@Override
 	public @NotNull OperationResult delete(ApiObject resource) {
 		final String fqn = StateUtils.getFQN(resource);
+		System.out.println("************************************");
+		System.out.println(fqn);
+		if (state.containsKey(fqn)) {
+			System.out.println("\n\nKey found. Entry:");
+			System.out.println(Utils.serializeAny(state.get(fqn)));
+			System.out.println("END.\n\n");
+
+		}
+
+		System.out.println(Utils.serializeAny(state));
+
+		System.out.println("-------------------------------------");
 
 		return new OpResult(
-			state.remove(fqn) != null
+			"delete",
+			state.containsKey(fqn) && state.remove(fqn) != null
 				? ExitCode.App.OK
 				: ExitCode.ResourceOperation.NOT_FOUND,
-
 			Collections.singletonList(resource));
 	}
 
@@ -81,6 +95,7 @@ public class MemoryPersistedState implements PersistedState {
 		final Pattern pattern = StateUtils.getFQNLookupRegex(name, type);
 
 		return new OpResult(
+			"get",
 			ExitCode.App.OK,
 			state.keySet()
 				.stream()
@@ -106,5 +121,10 @@ public class MemoryPersistedState implements PersistedState {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void reset() {
+		state.clear();
 	}
 }

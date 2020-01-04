@@ -13,7 +13,6 @@ import java.io.IOException;
 @CommandLine.Command(
 	description = "Delete existing resource.",
 	name = "delete",
-	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
 @Getter
@@ -22,6 +21,7 @@ public class DeleteActionCLI extends AbstractCLIAction {
 
 	@CommandLine.Option(
 		names = {"-f", "--file"},
+		hidden = true,
 		description = Args.FILE_D
 	)
 	private File modFolder;
@@ -29,6 +29,7 @@ public class DeleteActionCLI extends AbstractCLIAction {
 	@CommandLine.Option(
 		defaultValue = "false",
 		names = {"--dryRun"},
+		hidden = true,
 		description = Args.DRUN_D
 	)
 	private boolean dryRun;
@@ -48,6 +49,10 @@ public class DeleteActionCLI extends AbstractCLIAction {
 		description = Args.NAME_D
 	)
 	private String resourceIdentifier;
+
+	public DeleteActionCLI() {
+		super("delete");
+	}
 
 	/**
 	 * Implement this method with persistence logic.

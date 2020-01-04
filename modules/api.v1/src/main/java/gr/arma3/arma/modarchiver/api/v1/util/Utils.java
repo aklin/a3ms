@@ -74,6 +74,7 @@ public class Utils {
 
 		NAME_RGX = Pattern.compile("[\\w\\d_-]*");
 		DESC_RGX = Pattern.compile("[\\w\\d\\s]*");
+
 	}
 
 	static int getSizeKiB(final Path path) {

@@ -48,6 +48,10 @@ public class CreateActionCLI extends AbstractCLIAction {
 	)
 	private String resourceIdentifier;
 
+	public CreateActionCLI() {
+		super("create");
+	}
+
 
 	/**
 	 * Implement this method with persistence logic.

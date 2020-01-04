@@ -11,9 +11,11 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import picocli.CommandLine;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
@@ -21,8 +23,11 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 @Getter
+@RequiredArgsConstructor
 abstract class AbstractCLIAction
 	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
+
+	private final String verb;
 
 	private ExitCondition exitCondition = null;
 	private OperationResult result = null;
@@ -44,10 +49,12 @@ abstract class AbstractCLIAction
 			result = result != null
 				? result
 				: isDryRun()
-					? new OpResult(ExitCode.App.OK_DRY_RUN)
+					? new OpResult(this.verb, ExitCode.App.OK_DRY_RUN)
 					: persistResult();
 		} catch (IOException e) {
-			result = new OpResult(ExitCode.ResourceOperation.SAVE_ERROR,
+			result = new OpResult(
+				this.verb,
+				ExitCode.ResourceOperation.SAVE_ERROR,
 				Collections.singletonList(UserInfoMessage.builder()
 					.severity(10)
 					.message(e.getLocalizedMessage())
@@ -81,6 +88,7 @@ abstract class AbstractCLIAction
 		return obj;
 	}
 
+	@Nullable
 	public final ExitCondition getExitCondition() {
 		return exitCondition;
 	}

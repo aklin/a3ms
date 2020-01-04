@@ -90,8 +90,6 @@ public class Main {
 
 		cmd.execute(args);
 
-		return App.getLastOperation() == null
-			? cmd.getExecutionResult()
-			: App.getLastOperation();
+		return App.getLastOperation();
 	}
 }

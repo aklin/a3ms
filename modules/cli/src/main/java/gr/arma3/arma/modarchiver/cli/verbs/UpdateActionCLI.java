@@ -44,6 +44,10 @@ public class UpdateActionCLI extends AbstractCLIAction {
 	)
 	private String resourceIdentifier;
 
+	public UpdateActionCLI() {
+		super("update");
+	}
+
 	/**
 	 * Implement this method with persistence logic.
 	 *

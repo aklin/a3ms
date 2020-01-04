@@ -36,6 +36,7 @@ public class RedisPersistentState implements PersistedState {
 
 		if (!lookup.getResources().isEmpty()) {
 			return new OpResult(
+				"create",
 				ExitCode.ResourceOperation.ALREADY_EXISTS,
 				Collections.singletonList(resource));
 		}
@@ -51,9 +52,11 @@ public class RedisPersistentState implements PersistedState {
 				.count();
 		}
 
-		return new OpResult(failCount == 0
-			? ExitCode.App.OK
-			: ExitCode.ResourceOperation.SAVE_ERROR,
+		return new OpResult(
+			"create",
+			failCount == 0
+				? ExitCode.App.OK
+				: ExitCode.ResourceOperation.SAVE_ERROR,
 			Collections.singletonList(resource));
 	}
 
@@ -78,9 +81,11 @@ public class RedisPersistentState implements PersistedState {
 				.filter(s -> !"OK".equalsIgnoreCase(s))
 				.count();
 
-			return new OpResult(failCount == 0
-				? ExitCode.App.OK
-				: ExitCode.ResourceOperation.SAVE_ERROR,
+			return new OpResult(
+				"update",
+				failCount == 0
+					? ExitCode.App.OK
+					: ExitCode.ResourceOperation.SAVE_ERROR,
 				Collections.singletonList(resource));
 		}
 	}
@@ -102,7 +107,8 @@ public class RedisPersistentState implements PersistedState {
 
 			if (!conn.exists(fqn)) {
 				conn.discard();
-				return new OpResult(ExitCode.ResourceOperation.NOT_FOUND);
+				return new OpResult("delete",
+					ExitCode.ResourceOperation.NOT_FOUND);
 			}
 			conn.del(fqn);
 			failCount = conn.exec().stream()
@@ -111,6 +117,7 @@ public class RedisPersistentState implements PersistedState {
 				.count();
 
 			return new OpResult(
+				"delete",
 				failCount == 0
 					? ExitCode.App.OK
 					: ExitCode.ResourceOperation.SAVE_ERROR,
@@ -148,7 +155,7 @@ public class RedisPersistentState implements PersistedState {
 				.map(Utils::deserialize)
 				.collect(Collectors.toList());
 
-			return new OpResult(ExitCode.App.OK, result);
+			return new OpResult("get", ExitCode.App.OK, result);
 		}
 
 	}

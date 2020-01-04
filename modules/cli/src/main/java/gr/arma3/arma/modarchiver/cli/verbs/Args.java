@@ -16,5 +16,5 @@ interface Args {
 	String NAME_D = "Resource name.";
 	String NAME_L = "NAME";
 	String NAME_ARITY = "0..1";
-	String NAME_INDEX = "0";
+	String NAME_INDEX = "1";
 }

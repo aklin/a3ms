@@ -79,4 +79,11 @@ public interface PersistedState extends AutoCloseable {
 		);
 	}
 
+	/**
+	 * Optional operation. Clears state.
+	 */
+	default void reset() {
+
+	}
+
 }
