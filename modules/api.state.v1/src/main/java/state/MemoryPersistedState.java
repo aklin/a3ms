@@ -4,8 +4,14 @@ import gr.arma3.arma.modarchiver.api.v1.OpResult;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
+import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 
 import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,5 +91,20 @@ public class MemoryPersistedState implements PersistedState {
 
 	@Override
 	public void close() {
+		final String fname = String.format("state_%s.json",
+			LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+		final File debugOut = new File(fname);
+
+
+		try {
+			//noinspection ResultOfMethodCallIgnored
+			debugOut.createNewFile();
+			try (final FileWriter writer = new FileWriter(debugOut)) {
+				Utils.serializeAny(state, writer);
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

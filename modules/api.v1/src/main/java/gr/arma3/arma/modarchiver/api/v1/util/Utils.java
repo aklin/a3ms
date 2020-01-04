@@ -19,9 +19,7 @@ import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -202,15 +200,28 @@ public class Utils {
 		}
 	}
 
-	public static <E> String serializeAny(E serializable) {
+	public static <E> String serializeAny(final E serializable) {
+		final StringWriter writer = new StringWriter(512);
+
 		try {
-			return mapper
+			serializeAny(serializable, writer);
+		} catch (IOException e) {
+			log.severe(e.getMessage());
+		}
+
+		return writer.toString();
+	}
+
+	synchronized public static <E> void serializeAny(
+		final E serializable,
+		final Writer writer
+	) throws IOException {
+		try {
+			mapper
 				.writerWithDefaultPrettyPrinter()
-				.writeValueAsString(serializable)
-				.trim();
+				.writeValue(writer, serializable);
 		} catch (JsonProcessingException e) {
 			log.severe(e.getMessage());
-			return "";
 		}
 	}
 
