@@ -33,7 +33,5 @@ public class OpResult implements OperationResult {
 		this.resources = resources == null
 			? Collections.emptyList()
 			: resources;
-
-		new RuntimeException().printStackTrace();
 	}
 }

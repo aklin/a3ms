@@ -61,18 +61,6 @@ public class MemoryPersistedState implements PersistedState {
 	@Override
 	public @NotNull OperationResult delete(ApiObject resource) {
 		final String fqn = StateUtils.getFQN(resource);
-		System.out.println("************************************");
-		System.out.println(fqn);
-		if (state.containsKey(fqn)) {
-			System.out.println("\n\nKey found. Entry:");
-			System.out.println(Utils.serializeAny(state.get(fqn)));
-			System.out.println("END.\n\n");
-
-		}
-
-		System.out.println(Utils.serializeAny(state));
-
-		System.out.println("-------------------------------------");
 
 		return new OpResult(
 			"delete",

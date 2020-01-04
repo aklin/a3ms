@@ -38,7 +38,7 @@ public class App implements Callable<OperationResult> {
 		state = state == null ? new MemoryPersistedState() : state;
 	}
 
-	static void clearState() {
+	public static void clearState() {
 		state.reset();
 	}
 

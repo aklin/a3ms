@@ -2,7 +2,7 @@ package gr.arma3.arma.modarchiver.cli;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class AppCLITest {
 
-	@BeforeEach
+	@AfterEach
 	void clearState() {
 		App.clearState();
 	}
