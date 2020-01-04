@@ -25,30 +25,30 @@ public class GetActionCLI extends AbstractCLIAction {
 
 	@CommandLine.Option(
 		names = {"-f", "--file"},
-		description = "Folder or files to process."
+		description = Args.FILE_D
 	)
 	private File modFolder;
 
 	@CommandLine.Option(
 		defaultValue = "false",
 		names = {"--dryRun"},
-		description = "Do not change server state, but pretend to do so."
+		description = Args.DRUN_D
 	)
 	private boolean dryRun;
 
 	@CommandLine.Parameters(
-		index = "0",
-		arity = "0..1",
-		paramLabel = "TYPE",
-		description = "Resource type. Required."
+		index = Args.TYPE_INDEX,
+		arity = Args.TYPE_ARITY,
+		paramLabel = Args.TYPE_L,
+		description = Args.TYPE_D
 	)
 	private String resourceType;
 
 	@CommandLine.Parameters(
-		index = "1",
-		arity = "0..1",
-		paramLabel = "NAME",
-		description = "Resource name."
+		index = Args.NAME_INDEX,
+		arity = Args.NAME_ARITY,
+		paramLabel = Args.NAME_L,
+		description = Args.NAME_D
 	)
 	private String resourceIdentifier;
 
