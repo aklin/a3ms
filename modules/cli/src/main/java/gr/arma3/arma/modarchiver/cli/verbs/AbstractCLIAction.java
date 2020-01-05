@@ -11,15 +11,14 @@ import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import picocli.CommandLine;
 
 import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 @Getter
@@ -40,10 +39,15 @@ abstract class AbstractCLIAction
 
 	public abstract File getModFolder();
 
-	@Setter
-	protected List<ApiObject> results = Collections.emptyList();
-
-	public final OperationResult call() {
+	/**
+	 * Execute command. This method is not extendable, and relies on
+	 * {@link #persistResult()} being implemented. Sets
+	 * {@link #getExitCondition()} and {@link #getResult()}. Calling this
+	 * method more than once will not execute the command again.
+	 *
+	 * @return Operation result. Never null.
+	 */
+	public final @NonNull OperationResult call() {
 
 		try {
 			result = result != null
@@ -88,6 +92,11 @@ abstract class AbstractCLIAction
 		return obj;
 	}
 
+	/**
+	 * Get exit condition. Will return null if invoked before {@link #call()}.
+	 *
+	 * @return Exit condition.
+	 */
 	@Nullable
 	public final ExitCondition getExitCondition() {
 		return exitCondition;
