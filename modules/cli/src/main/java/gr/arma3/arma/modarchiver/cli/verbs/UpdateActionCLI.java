@@ -1,10 +1,12 @@
 package gr.arma3.arma.modarchiver.cli.verbs;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
+import gr.arma3.arma.modarchiver.cli.App;
 import lombok.Getter;
 import picocli.CommandLine;
 
 import java.io.File;
+import java.io.IOException;
 
 @CommandLine.Command(
 	description = "Update existing resource.",
@@ -54,7 +56,7 @@ public class UpdateActionCLI extends AbstractCLIAction {
 	 * @return Exit condition
 	 */
 	@Override
-	protected OperationResult persistResult() {
-		throw new RuntimeException("fixme");
+	protected OperationResult persistResult() throws IOException {
+		return App.getState().update(processInput());
 	}
 }

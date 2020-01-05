@@ -1,6 +1,7 @@
 package gr.arma3.arma.modarchiver.cli;
 
 import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
+import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -87,6 +88,56 @@ public class AppCLITest {
 				modset.getType(),
 				modset.getMeta().getName()
 			));
+	}
+
+	@Test
+	void updateTest() throws IOException {
+		final String original = getContents("bar.yaml");
+		final File updated = getResourceFile("bar-update.yaml");
+		final ApiObject modset = Utils.deserialize(original);
+		final ApiObject modsetUpd =
+			Utils.deserialize(getContents(updated.getName()));
+		final ApiObject updateResult;
+		final OperationResult opResult;
+
+		assertEquals(0,
+			Main.callWithArgs(
+				"create",
+				modset.getType(),
+				modset.getMeta().getName()
+			));
+
+		Main.exec("update",
+			"-f",
+			updated.getPath()
+		);
+
+		opResult = Main.exec(
+			"get",
+			modset.getType(),
+			modset.getMeta().getName()
+		);
+
+		assertFalse(opResult.getExitCondition().isError());
+		assertEquals("get", opResult.getVerb());
+		assertEquals(1, opResult.getResources().size());
+		assertEquals(modsetUpd, opResult.getResources().get(0));
+
+	}
+
+	private String getContents(String resourceName) throws IOException {
+		final File file = getResourceFile(resourceName);
+
+		return Files.readString(file.toPath());
+	}
+
+	private File getResourceFile(String resourceName) throws IOException {
+		final String path = URLDecoder.decode(getClass().getClassLoader()
+				.getResource(resourceName).getFile(),
+			StandardCharsets.UTF_8
+		);
+
+		return new File(path);
 	}
 
 
