@@ -29,7 +29,6 @@ public class App implements Callable<OperationResult> {
 
 	private static OperationResult lastOperation;
 
-
 	public App() {
 		initState();
 	}
@@ -51,7 +50,9 @@ public class App implements Callable<OperationResult> {
 	 * @param lastOperation
 	 */
 	public static void thisIsAHorribleCrime(final OperationResult lastOperation) {
-		App.lastOperation = lastOperation;
+		App.lastOperation = lastOperation == null
+			? App.lastOperation
+			: lastOperation;
 	}
 
 	public static OperationResult getLastOperation() {
@@ -59,6 +60,7 @@ public class App implements Callable<OperationResult> {
 	}
 
 	public static PersistedState getState() {
+		initState();
 		return state;
 	}
 

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -98,7 +99,8 @@ public class AppCLITest {
 		final ApiObject modsetUpd =
 			Utils.deserialize(getContents(updated.getName()));
 		final ApiObject updateResult;
-		final OperationResult opResult;
+		final OperationResult getOpResult;
+		final OperationResult createOpResult;
 
 		assertEquals(0,
 			Main.callWithArgs(
@@ -107,21 +109,36 @@ public class AppCLITest {
 				modset.getMeta().getName()
 			));
 
-		Main.exec("update",
+		createOpResult = Main.exec("update",
 			"-f",
 			updated.getPath()
 		);
 
-		opResult = Main.exec(
+		getOpResult = Main.exec(
 			"get",
-			modset.getType(),
+			"",
 			modset.getMeta().getName()
 		);
 
-		assertFalse(opResult.getExitCondition().isError());
-		assertEquals("get", opResult.getVerb());
-		assertEquals(1, opResult.getResources().size());
-		assertEquals(modsetUpd, opResult.getResources().get(0));
+
+		System.out.println(">======================= createResult");
+		System.out.println(Utils.serializeAny(createOpResult));
+		System.out.println(">======================= opResult");
+		System.out.println(Utils.serializeAny(getOpResult));
+
+		System.out.println(">======================= State");
+		System.out.println(Utils.serializeAny(App.getState()));
+
+		final ApiObject o;
+
+		assertFalse(getOpResult.getExitCondition().isError());
+		assertEquals("get", getOpResult.getVerb());
+		assertEquals(1, getOpResult.getResources().size());
+
+		o = getOpResult.getResources().get(0);
+
+
+		assertEquals("bar", o.getMeta().getLabels().get("foo"));
 
 	}
 
@@ -138,6 +155,20 @@ public class AppCLITest {
 		);
 
 		return new File(path);
+	}
+
+	//	@Test
+	void testStderr() throws IOException {
+		final PrintStream stderr = System.err;
+//		final PrintStream mim = new PrintWriter(new ObjectOutputStream());
+
+		try {
+			Utils.z_test_writeToStderr();
+
+		} finally {
+			System.setErr(stderr);
+		}
+
 	}
 
 

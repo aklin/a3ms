@@ -237,4 +237,13 @@ public class Utils {
 			.message(condition.getDescription())
 			.build();
 	}
+
+	/**
+	 * Only for unit tests.
+	 *
+	 * @deprecated
+	 */
+	public static void z_test_writeToStderr() {
+		System.err.println("stderr output");
+	}
 }

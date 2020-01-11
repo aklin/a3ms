@@ -87,8 +87,17 @@ public class MemoryPersistedState implements PersistedState {
 			ExitCode.App.OK,
 			state.keySet()
 				.stream()
-				.filter(s -> pattern.matcher(s).matches())
+				.filter(s -> {
+					System.out.println(String.format("Testing [%s] rgx: [%s] ",
+						s,
+						pattern.toString()));
+					System.out.println("\tMatches: " + pattern.matcher(s)
+						.matches());
+
+					return pattern.matcher(s).matches();
+				})
 				.map(state::get)
+//				.peek(System.out::println)
 				.collect(Collectors.toList()));
 	}
 

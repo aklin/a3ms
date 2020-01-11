@@ -1,6 +1,6 @@
 type: "Modset"
 meta:
-  name: "Test Modset - Updated"
+  name: "Test Modset"
   description: ""
   labels:
     foo: "bar"

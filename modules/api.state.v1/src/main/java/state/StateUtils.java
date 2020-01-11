@@ -30,6 +30,6 @@ public class StateUtils {
 		name = name == null ? Utils.NAME_RGX.pattern() : name;
 		type = type == null ? Utils.NAME_RGX.pattern() : type;
 
-		return Pattern.compile(type + ":" + name);
+		return Pattern.compile(type + Pattern.quote(":") + name);
 	}
 }
