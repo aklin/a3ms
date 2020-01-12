@@ -84,8 +84,6 @@ abstract class AbstractCLIAction
 			? new DummyAPIObject()
 			: Utils.parseFile(getModFolder().toPath());
 
-		System.out.println("Mod folder: " + getModFolder());
-
 		this.setExitCondition(
 			Utils.validate(obj)
 				? ExitCode.App.OK
