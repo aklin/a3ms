@@ -109,6 +109,9 @@ public class AppCLITest {
 				modset.getMeta().getName()
 			));
 
+		System.out.println(">[1]==================== State");
+		System.out.println(Utils.serializeAny(App.getState()));
+
 		createOpResult = Main.exec("update",
 			"-f",
 			updated.getPath()
@@ -116,7 +119,7 @@ public class AppCLITest {
 
 		getOpResult = Main.exec(
 			"get",
-			"",
+			"modset",
 			modset.getMeta().getName()
 		);
 
@@ -126,7 +129,7 @@ public class AppCLITest {
 		System.out.println(">======================= opResult");
 		System.out.println(Utils.serializeAny(getOpResult));
 
-		System.out.println(">======================= State");
+		System.out.println(">[2]==================== State");
 		System.out.println(Utils.serializeAny(App.getState()));
 
 		final ApiObject o;

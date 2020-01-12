@@ -5,6 +5,9 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.ApiObject;
 import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.java.Log;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
@@ -18,9 +21,15 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Log
+@NoArgsConstructor
 public class MemoryPersistedState implements PersistedState {
 
 	private final Map<String, ApiObject> state = new HashMap<>();
+
+	public MemoryPersistedState(@NonNull final MemoryPersistedState from) {
+		this.state.putAll(from.state);
+	}
 
 	@Override
 	public @NotNull OperationResult create(ApiObject resource) {
@@ -82,22 +91,17 @@ public class MemoryPersistedState implements PersistedState {
 	public @NotNull OperationResult get(String name, String type) {
 		final Pattern pattern = StateUtils.getFQNLookupRegex(name, type);
 
+
 		return new OpResult(
 			"get",
 			ExitCode.App.OK,
-			state.keySet()
-				.stream()
-				.filter(s -> {
-					System.out.println(String.format("Testing [%s] rgx: [%s] ",
-						s,
-						pattern.toString()));
-					System.out.println("\tMatches: " + pattern.matcher(s)
-						.matches());
-
-					return pattern.matcher(s).matches();
-				})
+			state.keySet().stream()
 				.map(state::get)
-//				.peek(System.out::println)
+				.filter(apiObject -> (apiObject.getType()
+					.equalsIgnoreCase(type)))
+				.filter(apiObject -> (apiObject.getMeta()
+					.getName()
+					.matches(name)))
 				.collect(Collectors.toList()));
 	}
 
@@ -123,5 +127,10 @@ public class MemoryPersistedState implements PersistedState {
 	@Override
 	public void reset() {
 		state.clear();
+	}
+
+	@Override
+	public MemoryPersistedState clone() {
+		return new MemoryPersistedState(this);
 	}
 }

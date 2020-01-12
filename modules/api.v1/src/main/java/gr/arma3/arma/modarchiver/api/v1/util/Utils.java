@@ -72,8 +72,10 @@ public class Utils {
 			Repository.class
 		);
 
-		NAME_RGX = Pattern.compile("[\\w\\d_-]*");
-		DESC_RGX = Pattern.compile("[\\w\\d\\s]*");
+		NAME_RGX = Pattern.compile("[\\w\\d_-]*", Pattern.CASE_INSENSITIVE);
+		DESC_RGX = Pattern.compile("[\\w\\d\\s]*", Pattern.CASE_INSENSITIVE);
+
+		System.out.println("\t\tNAME_RGX: " + NAME_RGX.pattern());
 
 	}
 

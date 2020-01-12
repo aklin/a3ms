@@ -161,6 +161,11 @@ public class RedisPersistentState implements PersistedState {
 	}
 
 	@Override
+	public PersistedState clone() {
+		return null;
+	}
+
+	@Override
 	public void close() {
 		pool.close();
 		client.shutdown();

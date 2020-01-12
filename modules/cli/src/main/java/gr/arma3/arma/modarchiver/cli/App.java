@@ -59,6 +59,13 @@ public class App implements Callable<OperationResult> {
 		return App.lastOperation;
 	}
 
+	/**
+	 * Get a new clone of the state. Any changes made to the object returned by
+	 * this method will not update the internal state. This method is intended
+	 * mostly as a testing convenience.
+	 *
+	 * @return A clone of the state object.
+	 */
 	public static PersistedState getState() {
 		initState();
 		return state;

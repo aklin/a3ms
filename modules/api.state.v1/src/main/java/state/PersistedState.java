@@ -8,7 +8,8 @@ import javax.validation.constraints.NotNull;
 /**
  * State object. Used to retrieve resource hierarchies.
  */
-public interface PersistedState extends AutoCloseable {
+public interface PersistedState<This extends PersistedState>
+	extends AutoCloseable, Cloneable {
 
 	/**
 	 * Create new resource.
@@ -85,5 +86,7 @@ public interface PersistedState extends AutoCloseable {
 	default void reset() {
 
 	}
+
+	This clone();
 
 }

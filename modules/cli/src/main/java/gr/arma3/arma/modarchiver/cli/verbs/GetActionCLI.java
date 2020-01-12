@@ -11,13 +11,14 @@ import java.io.IOException;
 
 @CommandLine.Command(
 	description = "Get existing resource",
-	name = "get",
+	name = GetActionCLI.verb,
 	mixinStandardHelpOptions = true,
 	version = "1.0"
 )
 @Getter
 @ToString
 public class GetActionCLI extends AbstractCLIAction {
+	protected static final String verb = "get";
 
 	@CommandLine.ParentCommand
 	private App context;
