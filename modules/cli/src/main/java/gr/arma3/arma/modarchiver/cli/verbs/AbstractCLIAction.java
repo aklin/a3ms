@@ -10,6 +10,8 @@ import gr.arma3.arma.modarchiver.api.v1.interfaces.OperationResult;
 import gr.arma3.arma.modarchiver.api.v1.util.ExitCode;
 import gr.arma3.arma.modarchiver.api.v1.util.Utils;
 import gr.arma3.arma.modarchiver.cli.App;
+import gr.arma3.arma.modarchiver.cli.ParseAction;
+import gr.arma3.arma.modarchiver.cli.ServerStateAction;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +26,10 @@ import java.util.concurrent.Callable;
 @Getter
 @RequiredArgsConstructor
 abstract class AbstractCLIAction
-	implements Callable<OperationResult>, CommandLine.IExitCodeGenerator {
+	implements Callable<OperationResult>,
+	ServerStateAction,
+	ParseAction,
+	CommandLine.IExitCodeGenerator {
 
 	private final String verb;
 
@@ -33,9 +38,9 @@ abstract class AbstractCLIAction
 
 	public abstract boolean isDryRun();
 
-	public abstract String getResourceType();
+/*	public abstract String getResourceType();
 
-	public abstract String getResourceIdentifier();
+	public abstract String getResourceIdentifier();*/
 
 	public abstract File getModFolder();
 

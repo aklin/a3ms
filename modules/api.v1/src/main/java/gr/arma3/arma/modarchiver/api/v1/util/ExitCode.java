@@ -17,6 +17,7 @@ public class ExitCode {
 		OK_DRY_RUN(0,
 			"Success but nothing changed (used with --dryRun)",
 			false),
+		READ_PERM(10, "Cannot read file or folder."),
 		INIT_FAILURE(-1, "Internal failure."),
 		;
 
@@ -42,6 +43,7 @@ public class ExitCode {
 		NOT_READABLE(101, "File was found but could not be read."),
 		EXPECTED_FILE(105, "Expected resource to be a file, not a directory."),
 		EXPECTED_DIR(106, "Expected resource to be a directory, not a file."),
+		MISSING_PARAM(107, "Missing parameter: -f"),
 		PARSE_ERROR(110, "Syntax error."),
 		;
 		private final int exitCode;
